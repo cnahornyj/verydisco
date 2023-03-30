@@ -1,0 +1,16 @@
+.TextInformations {
+    position: relative;
+    margin: 0;
+    padding: 15px;
+    background: #fffff845;
+}
+
+.TextInformations > h4 {
+    margin: 0;
+}
+
+.TextInformations > img {
+    width: 25px;
+    position: absolute;
+    right: 15px;
+}
