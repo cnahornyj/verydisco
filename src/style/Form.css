@@ -1,0 +1,33 @@
+form {
+    color: white;
+    background: #4A87C0; 
+}
+
+select {
+    width: 40%;
+    height: 30px;
+    border: 1px solid #999;
+    color: #4A87C0;
+    background-color: #ffffffa8;
+    border-radius: 5px;
+}
+
+.TypesPlaces {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.TypesPlaces > img { 
+    width: 75px;
+    padding: 15px;
+    margin: 15px;
+    border: 1px solid white;
+}
+
+.TypesPlaces > img:hover {
+    transform: scale(1.1); 
+    transition-duration: 500ms;
+    background: #ffffffa8;
+    cursor: pointer;
+}
