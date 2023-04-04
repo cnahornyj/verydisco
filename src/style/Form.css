@@ -15,17 +15,24 @@ select {
 .TypesPlaces {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 }
 
-.TypesPlaces > img { 
+.TypePlace {
+    border: 1px solid;
+    padding: 15px 30px;
+}
+
+.TypePlace > img { 
     width: 75px;
-    padding: 15px;
-    margin: 15px;
-    border: 1px solid white;
 }
 
-.TypesPlaces > img:hover {
+.TypePlace > p {
+    margin: 0;
+    text-align: center;
+}
+
+.TypePlace:hover {
     transform: scale(1.1); 
     transition-duration: 500ms;
     background: #ffffffa8;

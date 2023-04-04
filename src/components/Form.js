@@ -17,8 +17,7 @@ class Form extends Component {
             //TODO: Gérer le click sur les types de places avec un true/false qui ajoute/retire la valeur du tableau
             place: '',
             typesPlaces: []
-            //TODO: Passer chaque type de lieu à false et les passer à true au click dessus
-            
+            //TODO: Passer chaque type de lieu à false et les passer à true au click dessus, passer un style si true/retirer si false   
         }
     }
 
@@ -43,17 +42,41 @@ class Form extends Component {
                 </div>
                 <div>
                     <p>Choississez des types de lieux</p>
-                    {/*TODO: Ajouter des textes pour une meilleure compréhension */}
                     <div className='TypesPlaces'>
                         {/*<img src={aquarium} alt="aquarium icon" onClick={e => alert(e.target.alt)}/>*/}
-                        <img src={aquarium} alt="aquarium icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={cocktail} alt="cocktail icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={mirrorball} alt="mirrorball icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={monalisa} alt="monalisa icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={museum} alt="museum icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={park} alt="park icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={praying} alt="praying icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                        <img src={roallercoaster} alt="roallercoaster icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                        {/*//TODO Voir pour récupérer au clic sur la div l'attribut alt de la balise enfant */}
+                        <div className='TypePlace'>
+                            <img src={aquarium} alt="aquarium icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Aquarium</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={cocktail} alt="cocktail icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Bar</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={mirrorball} alt="mirrorball icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>    
+                            <p>Boite</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={monalisa} alt="monalisa icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Peinture</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={museum} alt="museum icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Musée</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={park} alt="park icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Parc</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={praying} alt="praying icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Culte</p>
+                        </div>
+                        <div className='TypePlace'>
+                            <img src={roallercoaster} alt="roallercoaster icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Attraction</p>
+                        </div>                        
                     </div>
                 </div>
             </form>
