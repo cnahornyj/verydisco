@@ -22,12 +22,3 @@
     border: 1px solid grey;
 }
 
-.TextInformations {
-    text-align: initial;
-    padding: 15px;
-    background: #fffff845;
-}
-
-.TextInformations > h4 {
-    margin: 0;
-}
