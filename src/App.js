@@ -1,11 +1,14 @@
-import logo from './logo.svg';
+import Navbar from './components/Navbar';
 import Block from './components/Block';
+import Form from './components/Form';
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <Block/>
+    <div>
+      <Navbar/>
+      {/* <Block/> */} 
+      <Form/>
     </div>
   );
 }
