@@ -14,9 +14,17 @@ class Form extends Component {
         super(props)
 
         this.state = {
-            //TODO: Gérer le click sur les types de places avec un true/false qui ajoute/retire la valeur du tableau
-            place: '',
-            typesPlaces: []
+            city: '',
+            typesPlaces: [
+                {place: "aquarium", isChecked : false},
+                {place: "cocktail", isChecked : false},
+                {place: "mirrorball", isChecked : false},
+                {place: "monalisa", isChecked : false},
+                {place: "museum", isChecked : false},
+                {place: "park", isChecked : false},
+                {place: "praying", isChecked : false},
+                {place: "roallercoaster", isChecked : false}
+            ]
             //TODO: Passer chaque type de lieu à false et les passer à true au click dessus, passer un style si true/retirer si false   
         }
     }
@@ -24,11 +32,24 @@ class Form extends Component {
     addOrRemoveTypePlace(e){
         // Replace icon by whitespace and retire it
         var typePlace = e.target.alt.replace('icon','').replace(/ /g, "");
-        console.log('location type selected: '+typePlace);
-        //*TODO: pousser l'élément dans le tableau typesPlaces ? Ne pas pouvoir si déjà existant ?
+        console.log('Location type selected: '+typePlace);
+
+        // Find type of place in array of objects typesPlaces
+        var placeSelected = this.state.typesPlaces.find((type) => type.place === typePlace);
+        // Check the isChecked value of the type of place
+        var isSelected = placeSelected.isChecked;
+
+        // Update the state typesPlaces with invert isChecked value of the type of place selected
+        this.setState(prevState => ({
+            typesPlaces: prevState.typesPlaces.map(
+            obj => (obj.place === typePlace ? Object.assign(obj, { isChecked: !isSelected }) : obj)
+          )
+        }));
+
+        console.log("List of places and values: ",  this.state.typesPlaces);
     }
 
-    //TODO: Créer une fonction onSubmit du formulaire qui récupère tous les états dont la valeur est true (?) et les pousse dans le tableau typesPlaces (?) puis envoie la/les requête(s) à partir du state récupéré
+    //TODO: Créer une fonction onSubmit du formulaire qui récupère toutes les valeurs place dont la valeur isChecked == true puis envoie la/les requête(s) à partir du state récupéré
     
     render() {
         return (
