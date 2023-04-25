@@ -1,14 +1,16 @@
 import Navbar from './components/Navbar';
 import Block from './components/Block';
 import Form from './components/Form';
+import UserServices from './services/UserServices';
 import './App.css';
 
 function App() {
   return (
     <div>
       <Navbar/>
-      {/* <Block/> */} 
-      <Form/>
+      <UserServices/>
+      {/* <Block/> 
+      <Form/>*/} 
     </div>
   );
 }
