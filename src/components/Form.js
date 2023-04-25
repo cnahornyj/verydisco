@@ -14,7 +14,7 @@ class Form extends Component {
         super(props)
 
         this.state = {
-            city: '',
+            city: 'Lyon',
             typesPlaces: [
                 {place: "aquarium", isChecked : false},
                 {place: "cocktail", isChecked : false},
@@ -24,10 +24,13 @@ class Form extends Component {
                 {place: "park", isChecked : false},
                 {place: "praying", isChecked : false},
                 {place: "roallercoaster", isChecked : false}
-            ]
-            //TODO: Passer chaque type de lieu à false et les passer à true au click dessus, passer un style si true/retirer si false   
+            ]   
         }
+        this.onFormSubmit = this.onFormSubmit.bind(this);
     }
+
+    //TODO: Créer une fonction addCity qui MAJ l'état city avec la valeur sélectionnée dans la liste des villes
+
 
     addOrRemoveTypePlace(e){
         // Replace icon by whitespace and retire it
@@ -50,10 +53,27 @@ class Form extends Component {
     }
 
     //TODO: Créer une fonction onSubmit du formulaire qui récupère toutes les valeurs place dont la valeur isChecked == true puis envoie la/les requête(s) à partir du state récupéré
-    
+    onFormSubmit(event) {
+        event.preventDefault();
+        //console.log('onFormSubmit : ', this); 
+
+        // Verify if a city has been selected
+        if(!this.state.city){
+            alert("Veuillez sélectionner une ville!");
+        // Verify if at least a type of place has been selected   
+        //TODO: Voir pour faire une vérification de la valeur isChecked pour chaque type de lieu 
+        } else if (!this.state.typesPlaces[0].isChecked && !this.state.typesPlaces[1].isChecked){
+            alert("Veuillez sélectionner au moins un type de lieu!");
+        // If everything's ok we send request(s)    
+        } else {
+            //TODO: Envoyer la/les requête(s)
+            alert("On envoie la/les requête(s)!");
+        }
+    }
+
     render() {
         return (
-            <form>
+            <form onSubmit={this.onFormSubmit}>
                 <div className='cities'>
                     <p>Choississez une ville</p>
                     <select name="cities" id="cities">
@@ -99,6 +119,7 @@ class Form extends Component {
                             <p>Attraction</p>
                         </div>                        
                     </div>
+                    <button>Envoyer</button>
                 </div>
             </form>
         );
