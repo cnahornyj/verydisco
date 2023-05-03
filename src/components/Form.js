@@ -8,6 +8,7 @@ import museum from '../assets/museum_white_icon.png';
 import park from '../assets/park_white_icon.png';
 import praying from '../assets/praying_white_icon.png';
 import roallercoaster from '../assets/roallercoaster_white_icon.png';
+import { findPlaces } from '../App';
 
 class Form extends Component {
     constructor(props) {
@@ -68,6 +69,13 @@ class Form extends Component {
         } else {
             //TODO: Envoyer la/les requête(s)
             alert("On envoie la/les requête(s)!");
+            // Test de la fonction findPlaces dans le composant App (données en dure)
+            var center = {
+                lat: 45.763,
+                lng: 4.835
+            };
+            var type = "cocktail";
+            findPlaces(type);
         }
     }
 
