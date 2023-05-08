@@ -30,9 +30,6 @@ class Form extends Component {
         this.onFormSubmit = this.onFormSubmit.bind(this);
     }
 
-    //TODO: Créer une fonction addCity qui MAJ l'état city avec la valeur sélectionnée dans la liste des villes
-
-
     addOrRemoveTypePlace(e){
         // Replace icon by whitespace and retire it
         var typePlace = e.target.alt.replace('icon','').replace(/ /g, "");
@@ -53,29 +50,34 @@ class Form extends Component {
         console.log("List of places and values: ",  this.state.typesPlaces);
     }
 
-    //TODO: Créer une fonction onSubmit du formulaire qui récupère toutes les valeurs place dont la valeur isChecked == true puis envoie la/les requête(s) à partir du state récupéré
     onFormSubmit(event) {
         event.preventDefault();
-        //console.log('onFormSubmit : ', this); 
 
         // Verify if a city has been selected
         if(!this.state.city){
-            alert("Veuillez sélectionner une ville!");
-        // Verify if at least a type of place has been selected   
-        //TODO: Voir pour faire une vérification de la valeur isChecked pour chaque type de lieu 
-        } else if (!this.state.typesPlaces[0].isChecked && !this.state.typesPlaces[1].isChecked){
-            alert("Veuillez sélectionner au moins un type de lieu!");
-        // If everything's ok we send request(s)    
+            alert("Veuillez sélectionner une ville!"); 
         } else {
-            //TODO: Envoyer la/les requête(s)
-            alert("On envoie la/les requête(s)!");
-            // Test de la fonction findPlaces dans le composant App (données en dure)
+            // Send requests
+            var selectedTypes = [];
+            for (var i = 0; i < this.state.typesPlaces.length; i++) {
+                if (this.state.typesPlaces[i].isChecked) {
+                    selectedTypes.push(this.state.typesPlaces[i].place);
+                }
+            } 
+            console.log("Types of place selected :"+selectedTypes); 
+            console.log("On envoie la/les requête(s)!");
+
+            //TODO: Récupérer les coordonnées de la ville sélectionnée (fichier json)
             var center = {
                 lat: 45.763,
                 lng: 4.835
             };
-            var type = "cocktail";
-            findPlaces(type);
+            // Verify if at least a type of place has been selected 
+            if(selectedTypes.length > 0){
+                for(i in selectedTypes){
+                    findPlaces(center,selectedTypes[i]);
+                }
+            }
         }
     }
 
