@@ -30,40 +30,71 @@ var loader = new Loader({
 });
    
 //TODO: Use for retrieve place id and after place details
-export function findPlaces(type){
+export function findPlaces(center, type){
   loader
   .load()
   .then((google) => {
     var mapOptions = {
-      //TODO: A voir pourquoi l'objet n'est pas récupéré via la fonction utilisée dans le composant Form
-      center: {
-        lat: 45.763,
-        lng: 4.835
-      },
+      center: center,
       zoom: 17
     };
 
-    /* console.log(center);
-    console.log(type); */
+    var radius;
+    switch (type) {
+      case 'aquarium':
+        radius = 10000;
+        break;
+      case 'cocktail':
+        radius = 2000;
+      break;  
+      case 'mirrorball':
+        radius = 2000;
+      break;
+      case 'monalisa':
+        radius = 3000;
+      break;
+      case 'museum':
+        radius = 3000;
+      break;
+      case 'park':
+        radius = 1500;
+      break;
+      case 'praying':
+        radius = 2500;
+      break;
+      default:
+        console.log(`Sorry, there is no type of place.`);
+    }
 
     const map = new google.maps.Map(document.getElementById("map"), mapOptions);
 
     var service = new google.maps.places.PlacesService(map);
 
     service.nearbySearch(
-      { location: mapOptions.center, radius: 2000, type: type},
+      { location: mapOptions.center, radius: radius, type: type},
       (results, status, pagination) => {
         console.log(status,results);
-        console.log(results);
-          if (status !== "OK" || !results){
-            return;
-          } else {
-            console.log("Something s wrong");
-          }
+        if (status !== "OK" || !results){
+          //TODO: Add markers on map
+          /*return;
+          const infowindow = new google.maps.InfoWindow();
+          const marker = new google.maps.Marker({
+            map,
+            position: results.geometry.location,
+          });
+          google.maps.event.addListener(marker, "click", () => {
+            const content = document.createElement("div");
+            const nameElement = document.createElement("h2");
+
+            nameElement.textContent = results.name;
+            content.appendChild(nameElement);
+
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+          });*/
+        }
       }
     );
-
-    //TODO: Add markers on map
 
   })
   .catch(e => {
