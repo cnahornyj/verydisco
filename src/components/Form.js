@@ -9,12 +9,14 @@ import park from '../assets/park_white_icon.png';
 import praying from '../assets/praying_white_icon.png';
 import roallercoaster from '../assets/roallercoaster_white_icon.png';
 import { findPlaces } from '../App';
+import cities from "../cities.json";
 
 class Form extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            listCities: cities,
             city: "lyon",
             typesPlaces: [
                 {place: "aquarium", isChecked : false},
@@ -32,14 +34,7 @@ class Form extends Component {
 
     changeCity = (event) => {
         let value = event.target.value;
-        console.log("Valeur "+value);
-        this.setState(prevState => ({
-            city: prevState.city = value
-        }))
-
-        setTimeout(() => {
-            console.log("Ville sélectionnée :"+this.state.city);
-        }, 3000);
+        this.setState(prevState => ({ city: prevState.city = value}))
     };
 
     addOrRemoveTypePlace(e){
@@ -65,36 +60,39 @@ class Form extends Component {
     onFormSubmit(event) {
         event.preventDefault();
 
-        console.log("Selected city: "+this.state.city);
+        //console.log("Selected city: "+this.state.city);
+
+        var cityCoordinates = this.state.listCities.cities.find(city => city.name === this.state.city);
+        /* console.log('%c City coordinates: ', 'background: #ffff62; color: #000');
+        console.log(cityCoordinates); */
+
+        var center = {
+            lat: cityCoordinates.lat,
+            lng: cityCoordinates.lng
+        }
+        /* console.log('%c Central city coordinates: ', 'background: #ffff62; color: #000');
+        console.log(center); */
 
         // Verify if a city has been selected
         if(!this.state.city){
-            alert("Veuillez sélectionner une ville!"); 
+            alert("Select a city!"); 
         } else {
-            // Send requests
             var selectedTypes = [];
             for (var i = 0; i < this.state.typesPlaces.length; i++) {
                 if (this.state.typesPlaces[i].isChecked) {
                     selectedTypes.push(this.state.typesPlaces[i].place);
                 }
             } 
-            console.log("Types of place selected :"+selectedTypes); 
-            console.log("On envoie la/les requête(s)!");
+            /* console.log("Types of place selected :"+selectedTypes); 
+            console.log("On envoie la/les requête(s)!"); */
 
-            var city = this.state.city.toLowerCase();
-            console.log(city);
-
-            //TODO: Make a request for retrieving the center of the city selected
-
-            var center = {
-                lat: 45.763,
-                lng: 4.835
-            };
-            // Verify if at least a type of place has been selected 
+            // Verify if at least a type of place has been selected and send requests
             if(selectedTypes.length > 0){
                 for(i in selectedTypes){
                     findPlaces(center,selectedTypes[i]);
                 }
+            } else {
+                alert("Selectionnez au moins un type de lieu !");
             }
         }
     }
@@ -157,3 +155,4 @@ class Form extends Component {
 }
 
 export default Form;
+
