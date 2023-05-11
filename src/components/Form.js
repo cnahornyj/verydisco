@@ -15,7 +15,7 @@ class Form extends Component {
         super(props)
 
         this.state = {
-            city: 'Lyon',
+            city: "lyon",
             typesPlaces: [
                 {place: "aquarium", isChecked : false},
                 {place: "cocktail", isChecked : false},
@@ -29,6 +29,18 @@ class Form extends Component {
         }
         this.onFormSubmit = this.onFormSubmit.bind(this);
     }
+
+    changeCity = (event) => {
+        let value = event.target.value;
+        console.log("Valeur "+value);
+        this.setState(prevState => ({
+            city: prevState.city = value
+        }))
+
+        setTimeout(() => {
+            console.log("Ville sélectionnée :"+this.state.city);
+        }, 3000);
+    };
 
     addOrRemoveTypePlace(e){
         // Replace icon by whitespace and retire it
@@ -53,6 +65,8 @@ class Form extends Component {
     onFormSubmit(event) {
         event.preventDefault();
 
+        console.log("Selected city: "+this.state.city);
+
         // Verify if a city has been selected
         if(!this.state.city){
             alert("Veuillez sélectionner une ville!"); 
@@ -67,7 +81,11 @@ class Form extends Component {
             console.log("Types of place selected :"+selectedTypes); 
             console.log("On envoie la/les requête(s)!");
 
-            //TODO: Récupérer les coordonnées de la ville sélectionnée (fichier json)
+            var city = this.state.city.toLowerCase();
+            console.log(city);
+
+            //TODO: Make a request for retrieving the center of the city selected
+
             var center = {
                 lat: 45.763,
                 lng: 4.835
@@ -86,9 +104,11 @@ class Form extends Component {
             <form onSubmit={this.onFormSubmit}>
                 <div className='cities'>
                     <p>Choississez une ville</p>
-                    <select name="cities" id="cities">
-                        <option value="Lyon">Lyon</option>
-                        <option value="Paris">Paris</option>
+                    {/*//TODO Update this.state.city with the new value selected */}
+                    <select name="cities" id="cities" onChange={this.changeCity}>
+                        <option value="lyon">Lyon</option>
+                        <option value="paris">Paris</option>
+                        <option value="newyork">New York</option>
                     </select>
                 </div>
                 <div>
