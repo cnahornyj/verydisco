@@ -19,14 +19,14 @@ class Form extends Component {
             listCities: cities,
             city: "lyon",
             typesPlaces: [
-                {place: "aquarium", isChecked : false},
+                {place: "zoo", isChecked : false},
                 {place: "cocktail", isChecked : false},
-                {place: "mirrorball", isChecked : false},
+                {place: "night_club", isChecked : false},
                 {place: "monalisa", isChecked : false},
                 {place: "museum", isChecked : false},
                 {place: "park", isChecked : false},
-                {place: "praying", isChecked : false},
-                {place: "roallercoaster", isChecked : false}
+                {place: "church", isChecked : false},
+                {place: "amusement_park", isChecked : false}
             ]   
         }
         this.onFormSubmit = this.onFormSubmit.bind(this);
@@ -112,18 +112,18 @@ class Form extends Component {
                 <div>
                     <p>Choississez des types de lieux</p>
                     <div className='TypesPlaces'>
-                        {/*<img src={aquarium} alt="aquarium icon" onClick={e => alert(e.target.alt)}/>*/}
+                        {/*<img src={aquarium} alt="zoo icon" onClick={e => alert(e.target.alt)}/>*/}
                         {/*//TODO Voir pour récupérer au clic sur la div l'attribut alt de la balise enfant */}
                         <div className='TypePlace'>
-                            <img src={aquarium} alt="aquarium icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
-                            <p>Aquarium</p>
+                            <img src={aquarium} alt="zoo icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <p>Zoo</p>
                         </div>
                         <div className='TypePlace'>
-                            <img src={cocktail} alt="cocktail icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <img src={cocktail} alt="bar icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
                             <p>Bar</p>
                         </div>
                         <div className='TypePlace'>
-                            <img src={mirrorball} alt="mirrorball icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>    
+                            <img src={mirrorball} alt="night_club icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>    
                             <p>Boite</p>
                         </div>
                         <div className='TypePlace'>
@@ -139,11 +139,11 @@ class Form extends Component {
                             <p>Parc</p>
                         </div>
                         <div className='TypePlace'>
-                            <img src={praying} alt="praying icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <img src={praying} alt="church icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
                             <p>Culte</p>
                         </div>
                         <div className='TypePlace'>
-                            <img src={roallercoaster} alt="roallercoaster icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <img src={roallercoaster} alt="amusement_park icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
                             <p>Attraction</p>
                         </div>                        
                     </div>

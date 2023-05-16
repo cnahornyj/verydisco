@@ -41,13 +41,13 @@ export function findPlaces(center, type){
 
     var radius;
     switch (type) {
-      case 'aquarium':
-        radius = 10000;
+      case 'zoo':
+        radius = 15000;
         break;
-      case 'cocktail':
+      case 'bar':
         radius = 2000;
       break;  
-      case 'mirrorball':
+      case 'night_club':
         radius = 2000;
       break;
       case 'monalisa':
@@ -59,9 +59,12 @@ export function findPlaces(center, type){
       case 'park':
         radius = 1500;
       break;
-      case 'praying':
+      case 'church':
         radius = 2500;
       break;
+      case 'amusement_park':
+        radius = 20000;
+        break;
       default:
         console.log(`Sorry, there is no type of place.`);
     }
