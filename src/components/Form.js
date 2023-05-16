@@ -20,7 +20,7 @@ class Form extends Component {
             city: "lyon",
             typesPlaces: [
                 {place: "zoo", isChecked : false},
-                {place: "cocktail", isChecked : false},
+                {place: "bar", isChecked : false},
                 {place: "night_club", isChecked : false},
                 {place: "monalisa", isChecked : false},
                 {place: "museum", isChecked : false},
