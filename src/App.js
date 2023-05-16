@@ -34,6 +34,7 @@ export function findPlaces(center, type){
   loader
   .load()
   .then((google) => {
+    //TODO: La variable doit être placée à un niveau supérieur pour être utilisée dans les deux fonctions suivantes
     var mapOptions = {
       center: center,
       zoom: 17
@@ -69,8 +70,9 @@ export function findPlaces(center, type){
         console.log(`Sorry, there is no type of place.`);
     }
 
+    //TODO: La variable doit être placée à un niveau supérieur pour être utilisée dans les deux fonctions suivantes
     const map = new google.maps.Map(document.getElementById("map"), mapOptions);
-
+    //TODO: La variable doit être placée à un niveau supérieur pour être utilisée dans les deux fonctions suivantes
     var service = new google.maps.places.PlacesService(map);
 
     service.nearbySearch(
@@ -78,7 +80,19 @@ export function findPlaces(center, type){
       (results, status, pagination) => {
         console.log(status,results);
         if (status !== "OK" || !results){
-          //TODO: Add markers on map
+        } else {
+          var arrPlaces = [];
+          for(let i = 0; i < results.length; i++){
+            var placeId = results[i].place_id;
+            arrPlaces.push(placeId);
+          }
+          console.log("Tableau des ID de lieux : ");
+          console.table(arrPlaces);
+
+          var data = JSON.stringify(arrPlaces);
+          localStorage.setItem('placesId', data);
+
+          //TODO: Add markers on map and a like button on every marker if click event on push placeId in localStorage
           /*return;
           const infowindow = new google.maps.InfoWindow();
           const marker = new google.maps.Marker({
@@ -99,10 +113,54 @@ export function findPlaces(center, type){
       }
     );
 
+    //TODO: pour chaque placeId faire les requêtes
+    setTimeout(() => {
+      findInformationsPlace(); 
+    }, 1000);
+
   })
   .catch(e => {
     // do something
   });
 }
+
+  function findInformationsPlace(){
+    loader
+    .load()
+    .then((google) => {
+      //! Les variables mapOptions & map ne seront pas utilisées à ce niveau à terme, ici elles sont utilisées pour un test préalable (test OK)
+      var mapOptions = {
+        center: {
+          lat: 45.765,
+          lng: 4.832
+        },
+        zoom: 17
+      };
+      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var service = new google.maps.places.PlacesService(map);
+      var ids = localStorage.getItem("placesId");
+      var placesId = ids.replace('[','').replace(']','').replaceAll('"','').split(',');
+
+      for(let i = 0; i < placesId.length; i++){
+        var request = {
+          placeId: placesId[i]
+        };
+        service.getDetails(request, function(place, status) {
+          // console.log("Statut de la requête:"+status)
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            //TODO: A voir quelles informations on veut récupérer par rapport au lieu & quoi en faire
+            console.log(place);
+  
+          }
+        });
+      }
+
+
+    })
+    .catch(e => {
+      // do something
+    });
+  }
+
 
 export default App;
