@@ -2,3 +2,24 @@
     width: 1000px;
     height: 500px;
 }
+
+.gm-style-iw-d {
+    overflow: hidden !important;
+    padding: 5px 15px 15px 0 !important;
+    line-height: 0.75 !important;
+}
+
+/* .gm-style-iw-c {
+    color: white;
+    background: rgb(103, 103, 103);
+    border: 1px solid rgb(74 74 74);
+} */
+
+.gm-style-iw-c {
+    color: white !important;
+    background: rgb(103, 103, 103) !important;
+}
+
+.gm-ui-hover-effect>span {
+    background-color: white !important;
+}
