@@ -137,6 +137,7 @@ export function findPlaces(center, type){
         zoom: 17
       };
       var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      var infowindow = new google.maps.InfoWindow();
       var service = new google.maps.places.PlacesService(map);
       var ids = localStorage.getItem("placesId");
       var placesId = ids.replace('[','').replace(']','').replaceAll('"','').split(',');
@@ -149,7 +150,16 @@ export function findPlaces(center, type){
           // console.log("Statut de la requête:"+status)
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             //TODO: A voir quelles informations on veut récupérer par rapport au lieu & quoi en faire
-            console.log(place);
+            console.log(place.website);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: place.geometry.location
+            });
+            google.maps.event.addListener(marker, 'click', function() {
+              infowindow.setContent(place.name);
+              infowindow.setContent(place.website);
+              infowindow.open(map, this);
+            });
   
           }
         });
