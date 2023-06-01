@@ -24,7 +24,7 @@ class App extends Component {
 
 var loader = new Loader({
   //TODO: Place apiKey for testing and use dotenv for sensible data
-  apiKey: "",
+  apiKey: "AIzaSyAannRQU8k0FVH3UOt6Z8mrh7bc3hmTtOw",
   version: "weekly",
   libraries: ["places"]
 });
@@ -92,28 +92,11 @@ export function findPlaces(center, type){
           var data = JSON.stringify(arrPlaces);
           localStorage.setItem('placesId', data);
 
-          //TODO: Add markers on map and a like button on every marker if click event on push placeId in localStorage
-          /*return;
-          const infowindow = new google.maps.InfoWindow();
-          const marker = new google.maps.Marker({
-            map,
-            position: results.geometry.location,
-          });
-          google.maps.event.addListener(marker, "click", () => {
-            const content = document.createElement("div");
-            const nameElement = document.createElement("h2");
-
-            nameElement.textContent = results.name;
-            content.appendChild(nameElement);
-
-            infowindow.setContent(content);
-            infowindow.open(map, marker);
-          });*/
         }
       }
     );
 
-    //TODO: pour chaque placeId faire les requêtes
+    // For every placeId make the request
     setTimeout(() => {
       findInformationsPlace(); 
     }, 1000);
@@ -129,6 +112,7 @@ export function findPlaces(center, type){
     .load()
     .then((google) => {
       //! Les variables mapOptions & map ne seront pas utilisées à ce niveau à terme, ici elles sont utilisées pour un test préalable (test OK)
+      //! Le centre correspond à la ville de Lyon (il faudra passer le centre selon la ville sélectionnée)
       var mapOptions = {
         center: {
           lat: 45.765,
@@ -149,16 +133,48 @@ export function findPlaces(center, type){
         service.getDetails(request, function(place, status) {
           // console.log("Statut de la requête:"+status)
           if (status === google.maps.places.PlacesServiceStatus.OK) {
-            //TODO: A voir quelles informations on veut récupérer par rapport au lieu & quoi en faire
-            console.log(place.website);
+            //TODO: Add markers on map and a like button on every marker if click event on push placeId in localStorage
             var marker = new google.maps.Marker({
               map: map,
               position: place.geometry.location
             });
             google.maps.event.addListener(marker, 'click', function() {
-              infowindow.setContent(place.name);
-              infowindow.setContent(place.website);
+              //TODO: Passer les infos relatives au lieu
+              // infowindow.setContent(place.name);
+              // infowindow.setContent(place.website);
+              // infowindow.open(map, this);
+
+              const content = document.createElement("div");
+              const nameElement = document.createElement("h2");
+
+              nameElement.textContent = place.name;
+              content.appendChild(nameElement);
+
+              const placeAddressElement = document.createElement("p");
+              placeAddressElement.textContent = place.formatted_address;
+              content.appendChild(placeAddressElement);
+
+              if(place.website !== undefined){
+                const websiteElement = document.createElement("a");
+                websiteElement.href = place.website;
+                websiteElement.target = "_blank";
+                websiteElement.textContent = "Site web";
+                content.appendChild(websiteElement);
+              }
+
+              if(place.user_ratings_total > 0){
+                const placeRatingElement = document.createElement("p");
+                placeRatingElement.textContent = place.rating + "/5 ⭐";
+                content.appendChild(placeRatingElement);
+                const nbOfRatings = document.createElement("p");
+                nbOfRatings.textContent = place.user_ratings_total + " avis";
+                content.appendChild(nbOfRatings);
+              }
+              
+              infowindow.setContent(content);
               infowindow.open(map, this);
+
+
             });
   
           }
