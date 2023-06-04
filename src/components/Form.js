@@ -22,7 +22,7 @@ class Form extends Component {
                 {place: "zoo", isChecked : false},
                 {place: "bar", isChecked : false},
                 {place: "night_club", isChecked : false},
-                {place: "monalisa", isChecked : false},
+                {place: "art_gallery", isChecked : false},
                 {place: "museum", isChecked : false},
                 {place: "park", isChecked : false},
                 {place: "church", isChecked : false},
@@ -127,7 +127,7 @@ class Form extends Component {
                             <p>Boite</p>
                         </div>
                         <div className='TypePlace'>
-                            <img src={monalisa} alt="monalisa icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
+                            <img src={monalisa} alt="art_gallery icon" onClick={this.addOrRemoveTypePlace.bind(this)}/>
                             <p>Peinture</p>
                         </div>
                         <div className='TypePlace'>
