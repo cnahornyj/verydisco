@@ -15,7 +15,6 @@ class App extends Component {
         <Navbar/>
         <Form/>
         <div id='map'> 
-        {/* <div id='map' onLoad={findPlaces("night_club")}>  */}
         </div>
       </main>
     );
@@ -28,7 +27,7 @@ var loader = new Loader({
   version: "weekly",
   libraries: ["places"]
 });
-   
+
 //TODO: Use for retrieve place id and after place details
 export function findPlaces(center, type){
   loader
@@ -51,7 +50,7 @@ export function findPlaces(center, type){
       case 'night_club':
         radius = 2000;
       break;
-      case 'monalisa':
+      case 'art_gallery':
         radius = 3000;
       break;
       case 'museum':
@@ -86,12 +85,10 @@ export function findPlaces(center, type){
             var placeId = results[i].place_id;
             arrPlaces.push(placeId);
           }
-          console.log("Tableau des ID de lieux : ");
-          console.table(arrPlaces);
-
+          /*console.log("Tableau des ID de lieux : ");
+          console.table(arrPlaces);*/
           var data = JSON.stringify(arrPlaces);
           localStorage.setItem('placesId', data);
-
         }
       }
     );
@@ -107,86 +104,88 @@ export function findPlaces(center, type){
   });
 }
 
-  function findInformationsPlace(){
-    loader
-    .load()
-    .then((google) => {
-      //! Les variables mapOptions & map ne seront pas utilisées à ce niveau à terme, ici elles sont utilisées pour un test préalable (test OK)
-      //! Le centre correspond à la ville de Lyon (il faudra passer le centre selon la ville sélectionnée)
-      var mapOptions = {
-        center: {
-          lat: 45.765,
-          lng: 4.832
-        },
-        zoom: 17
+function findInformationsPlace(){
+  loader
+  .load()
+  .then((google) => {
+    //! Les variables mapOptions & map ne seront pas utilisées à ce niveau à terme, ici elles sont utilisées pour un test préalable (test OK)
+    //! Le centre correspond à la ville de Lyon (il faudra passer le centre selon la ville sélectionnée)
+    var mapOptions = {
+      center: {
+        lat: 45.765,
+        lng: 4.832
+      },
+      zoom: 17
+    };
+    var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    var infowindow = new google.maps.InfoWindow();
+    var service = new google.maps.places.PlacesService(map);
+    var ids = localStorage.getItem("placesId");
+    var placesId = ids.replace('[','').replace(']','').replaceAll('"','').split(',');
+
+    for(let i = 0; i < placesId.length; i++){
+      var request = {
+        placeId: placesId[i]
       };
-      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-      var infowindow = new google.maps.InfoWindow();
-      var service = new google.maps.places.PlacesService(map);
-      var ids = localStorage.getItem("placesId");
-      var placesId = ids.replace('[','').replace(']','').replaceAll('"','').split(',');
+      service.getDetails(request, function(place, status) {
+        // console.log("Statut de la requête:"+status)
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          //TODO: Add markers on map and a like button on every marker if click event on push placeId in localStorage
+          var marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location
+          });
+          google.maps.event.addListener(marker, 'click', function() {
+            //TODO: Passer les infos relatives au lieu
+            const content = document.createElement("div");
 
-      for(let i = 0; i < placesId.length; i++){
-        var request = {
-          placeId: placesId[i]
-        };
-        service.getDetails(request, function(place, status) {
-          // console.log("Statut de la requête:"+status)
-          if (status === google.maps.places.PlacesServiceStatus.OK) {
-            //TODO: Add markers on map and a like button on every marker if click event on push placeId in localStorage
-            var marker = new google.maps.Marker({
-              map: map,
-              position: place.geometry.location
-            });
-            google.maps.event.addListener(marker, 'click', function() {
-              //TODO: Passer les infos relatives au lieu
-              // infowindow.setContent(place.name);
-              // infowindow.setContent(place.website);
-              // infowindow.open(map, this);
+            const nameElement = document.createElement("h2");
+            nameElement.textContent = place.name;
+            content.appendChild(nameElement);
 
-              const content = document.createElement("div");
-              const nameElement = document.createElement("h2");
+            const placeAddressElement = document.createElement("p");
+            placeAddressElement.textContent = place.formatted_address;
+            content.appendChild(placeAddressElement);
 
-              nameElement.textContent = place.name;
-              content.appendChild(nameElement);
+            if(place.website !== undefined) {
+              const websiteElement = document.createElement("a");
+              websiteElement.href = place.website;
+              websiteElement.target = "_blank";
+              websiteElement.textContent = "Site web";
+              content.appendChild(websiteElement);
+            }
 
-              const placeAddressElement = document.createElement("p");
-              placeAddressElement.textContent = place.formatted_address;
-              content.appendChild(placeAddressElement);
+            if(place.user_ratings_total > 0) {
+              const placeRatingElement = document.createElement("p");
+              placeRatingElement.textContent = place.rating + "/5 ⭐";
+              content.appendChild(placeRatingElement);
+              const nbOfRatings = document.createElement("p");
+              nbOfRatings.textContent = place.user_ratings_total + " avis";
+              content.appendChild(nbOfRatings);
+            }
 
-              if(place.website !== undefined){
-                const websiteElement = document.createElement("a");
-                websiteElement.href = place.website;
-                websiteElement.target = "_blank";
-                websiteElement.textContent = "Site web";
-                content.appendChild(websiteElement);
-              }
+            const likeElement = document.createElement("button");
+            likeElement.classList.add("likeBtn");
+            likeElement.textContent = "❤";
+            likeElement.addEventListener("click", function(){
+              likeElement.classList.add("likeBtnLiked");
+            })
+            content.appendChild(likeElement);
+             
+            infowindow.setContent(content);
+            infowindow.open(map, this);
 
-              if(place.user_ratings_total > 0){
-                const placeRatingElement = document.createElement("p");
-                placeRatingElement.textContent = place.rating + "/5 ⭐";
-                content.appendChild(placeRatingElement);
-                const nbOfRatings = document.createElement("p");
-                nbOfRatings.textContent = place.user_ratings_total + " avis";
-                content.appendChild(nbOfRatings);
-              }
-              
-              infowindow.setContent(content);
-              infowindow.open(map, this);
-
-
-            });
-  
-          }
-        });
-      }
+          });
+        }
+      });
+    }
 
 
-    })
-    .catch(e => {
-      // do something
-    });
-  }
+  })
+  .catch(e => {
+    // do something
+  });
+}
 
 
 export default App;
