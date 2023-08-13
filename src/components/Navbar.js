@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
+import "../style/Navbar.css";
 
 class Navbar extends Component {
     render() {
         return (
-            <nav>
-                <img src="https://upload.wikimedia.org/wikipedia/fr/1/11/Panda3D_Logo.png" alt="Logo de l'application" style={{"width":"50px"}}/>
-            </nav>
+            <div className='Navbar'>
+                <h1>Verydisco</h1>
+                <nav>
+                    <ul>
+                        <li><NavLink exact to="/">Accueil</NavLink></li>
+                        <li><NavLink exact to="/apropos">A propos</NavLink></li>
+                    </ul>
+                </nav>
+            </div>
         );
     }
 }

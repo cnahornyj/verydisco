@@ -1,0 +1,27 @@
+.Navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: #8cb6b2;
+    color: white;
+}
+
+nav {
+    width: 50%;
+}
+
+ul {
+    display: flex;
+    justify-content: flex-end;
+    list-style: none;
+}
+
+li {
+    margin-left: 30px;
+}
+
+a {
+    color: white !important;
+    text-decoration: none;
+}
