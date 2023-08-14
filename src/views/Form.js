@@ -34,8 +34,8 @@ class Form extends Component {
         this.onFormSubmit = this.onFormSubmit.bind(this);
     }
 
-    changeCity = (event) => {
-        let value = event.target.value;
+    changeCity = (e) => {
+        let value = e.target.value;
         this.setState(prevState => ({ city: prevState.city = value}))
     };
 
@@ -59,8 +59,8 @@ class Form extends Component {
         console.log("List of places and values: ",  this.state.typesPlaces);
     }
 
-    onFormSubmit(event) {
-        event.preventDefault();
+    onFormSubmit(e) {
+        e.preventDefault();
 
         var cityCoordinates = this.state.listCities.cities.find(city => city.name === this.state.city);
 
