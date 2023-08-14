@@ -28,8 +28,7 @@ class Form extends Component {
                 {place: "church", isChecked : false},
                 {place: "amusement_park", isChecked : false}
             ],
-            mapIsVisible: false,
-            selectedPlaces: null   
+            mapIsVisible: false
         }
         this.onFormSubmit = this.onFormSubmit.bind(this);
     }
@@ -96,16 +95,19 @@ class Form extends Component {
 
     findPlaces(center, type){
 
+        let arrSelectedPlaces = this.state.selectedPlaces;
         let map;
+        let infowindow;
+        infowindow = new window.google.maps.InfoWindow();
 
         map = new window.google.maps.Map(document.getElementById("map"), {
           center: center,
-          zoom: 17,
+          zoom: 10,
         });
 
         let mapOptions = {
         center: center,
-        zoom: 17
+        zoom: 10
         };
 
         let radius;
@@ -149,6 +151,64 @@ class Form extends Component {
                     console.log("Il y a une erreur lors de la récupération des données");
                 } else {
                     console.log("La requête est ok");
+                    this.setState({mapIsVisible: true});
+
+                    for (let i = 0; i < results.length; i++) {
+                        createMarker(results[i]);
+                    }
+
+                    function createMarker(place) {
+                        if (!place.geometry || !place.geometry.location) return;
+                      
+                        let marker = new window.google.maps.Marker({
+                          map,
+                          position: place.geometry.location,
+                        });
+                      
+                        window.google.maps.event.addListener(marker, "click", () => {
+                            let content = document.createElement("div");
+
+                            let nameElement = document.createElement("h2");
+                            nameElement.textContent = place.name;
+                            content.appendChild(nameElement);
+
+                            if(place.rating > 0){
+                                let placeRating = document.createElement("p");
+                                placeRating.textContent = place.rating + "/5 ⭐";
+                                content.appendChild(placeRating);
+                            }
+
+                            let likeElement = document.createElement("button");
+                            likeElement.classList.add("likeBtn");
+                            likeElement.textContent = "❤";
+                            likeElement.addEventListener("click", function () {
+                              likeElement.classList.add("likeBtnLiked");
+                              addPlaceIdToList(place.place_id);
+                            });
+                            content.appendChild(likeElement);
+
+                            infowindow.setContent(content);
+                            infowindow.open(map, marker);                            
+                        });
+                    }
+
+                    function addPlaceIdToList(id){
+                        console.log("ID du lieu liké : "+ id);
+                        console.log("J'ajoute un id de lieu");
+                        console.log(arrSelectedPlaces);
+                        for(let i = 0; i < arrSelectedPlaces.length; i++){
+                            if(arrSelectedPlaces[i] === id){
+                                console.log("Impossible d'ajouter deux fois le même lieu");
+                            } else {
+                                console.log(arrSelectedPlaces);
+                                this.setState({selectedPlaces: [...arrSelectedPlaces, id]});
+                                setTimeout(() => {
+                                    console.log(arrSelectedPlaces);
+                                }, 1500);
+                            }
+                        }
+                    }
+
                     /* var arrPlaces = [];
                     for(let i = 0; i < results.length; i++){
                         var placeId = results[i].place_id;
@@ -156,13 +216,14 @@ class Form extends Component {
                     }
                     var data = JSON.stringify(arrPlaces);
                     localStorage.setItem('placesId', data);*/
+
                 }
             }
         );
-        //TODO: récupérer l'élément avec l'id map (querySelector) et lui passer une hauteur x large (car initialement la carte doit être cachée/vide)
-        //TODO: ajouter les marqueurs sur la carte
-        //TODO: passer des boutons de like aux marqueurs (au clic ajoute l'ID du lieu au localStorage)
 
+        //TODO: passer des boutons de like aux marqueurs (au clic ajoute l'ID du lieu au localStorage)
+        //TODO: afficher la section Votre sélection en conséquence
+        //TODO: ajouter un bouton J'ai terminé ma sélection à la section Votre sélection
     }
         
     // findInformationsPlace(){
@@ -302,7 +363,13 @@ class Form extends Component {
                         <button>Envoyer</button>
                     </div>
                 </form>
-                <div id='map'></div>
+                <div className="Suggestions">
+                    {this.state.mapIsVisible ? 
+                    (<div className="SelectedPlaces">
+                        <p>Votre sélection</p>
+                    </div>) : null}
+                    <div id='map'></div>
+                </div>
             </div>
         );
     }
