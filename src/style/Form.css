@@ -79,6 +79,11 @@ button {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    position: fixed;
+    top: 28%;
+    left: 40%;
+    margin-top: -100px;
+    margin-left: -250px;
 }
 
 .SelectedPlaces {
@@ -95,10 +100,15 @@ button {
     align-items: center;
     background: #06675e;
     color: white;
-    padding: 15px 20px;
+    padding: 0 20px;
     margin-top: 0px;
     border-top-left-radius: 30px;
     font-weight: 500;
+}
+
+.SelectedPlaces > div > p {
+    font-weight: 600;
+    font-size: 18px;
 }
 
 .SelectedPlaces > div > .sendFinalList {
