@@ -78,6 +78,7 @@ button {
 .Suggestions {
     display: flex;
     flex-direction: row;
+    justify-content: center;
 }
 
 .SelectedPlaces {
@@ -88,11 +89,28 @@ button {
     border-top-left-radius: 30px;
 }
 
-.SelectedPlaces > p {
+.SelectedPlaces > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: #06675e;
     color: white;
     padding: 15px 20px;
     margin-top: 0px;
     border-top-left-radius: 30px;
     font-weight: 500;
+}
+
+.SelectedPlaces > div > .sendFinalList {
+    background: white;
+    color: #06675e;
+    padding: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 12px;
+    width: 100px;
+}
+
+.SelectedPlaces > div > .sendFinalList:hover {
+    font-weight: bold;
 }
