@@ -61,6 +61,13 @@ class Form extends Component {
     onFormSubmit(e) {
         e.preventDefault();
 
+        if(localStorage.getItem('selectedPlacesId') == null) {
+            localStorage.setItem('selectedPlacesId', '[]');
+        }
+
+        //TODO: stocker tout d'abord la ville et un tableau vide (à voir pour la structure)
+        
+
         var cityCoordinates = this.state.listCities.cities.find(city => city.name === this.state.city);
 
         var center = {
@@ -95,7 +102,6 @@ class Form extends Component {
 
     findPlaces(center, type){
 
-        let arrSelectedPlaces = this.state.selectedPlaces;
         let map;
         let infowindow;
         infowindow = new window.google.maps.InfoWindow();
@@ -150,7 +156,6 @@ class Form extends Component {
                 if (status !== "OK" || !results){
                     console.log("Il y a une erreur lors de la récupération des données");
                 } else {
-                    console.log("La requête est ok");
                     this.setState({mapIsVisible: true});
 
                     for (let i = 0; i < results.length; i++) {
@@ -182,8 +187,8 @@ class Form extends Component {
                             likeElement.classList.add("likeBtn");
                             likeElement.textContent = "❤";
                             likeElement.addEventListener("click", function () {
-                              likeElement.classList.add("likeBtnLiked");
-                              addPlaceIdToList(place.place_id);
+                            likeElement.classList.add("likeBtnLiked");
+                            addPlaceIdToList(place.place_id);
                             });
                             content.appendChild(likeElement);
 
@@ -193,39 +198,18 @@ class Form extends Component {
                     }
 
                     function addPlaceIdToList(id){
-                        console.log("ID du lieu liké : "+ id);
-                        console.log("J'ajoute un id de lieu");
-                        console.log(arrSelectedPlaces);
-                        for(let i = 0; i < arrSelectedPlaces.length; i++){
-                            if(arrSelectedPlaces[i] === id){
-                                console.log("Impossible d'ajouter deux fois le même lieu");
-                            } else {
-                                console.log(arrSelectedPlaces);
-                                this.setState({selectedPlaces: [...arrSelectedPlaces, id]});
-                                setTimeout(() => {
-                                    console.log(arrSelectedPlaces);
-                                }, 1500);
-                            }
-                        }
+                        let oldArray = JSON.parse(localStorage.getItem('selectedPlacesId'));
+                        oldArray.push(id);
+                        localStorage.setItem('selectedPlacesId', JSON.stringify(oldArray));
                     }
-
-                    /* var arrPlaces = [];
-                    for(let i = 0; i < results.length; i++){
-                        var placeId = results[i].place_id;
-                        arrPlaces.push(placeId);
-                    }
-                    var data = JSON.stringify(arrPlaces);
-                    localStorage.setItem('placesId', data);*/
-
                 }
             }
         );
 
-        //TODO: passer des boutons de like aux marqueurs (au clic ajoute l'ID du lieu au localStorage)
         //TODO: afficher la section Votre sélection en conséquence
         //TODO: ajouter un bouton J'ai terminé ma sélection à la section Votre sélection
     }
-        
+   
     // findInformationsPlace(){
     // loader
     // .load()
@@ -309,6 +293,17 @@ class Form extends Component {
     // });
     // }
 
+    saveFinalList(){
+        let finalList = JSON.parse(localStorage.getItem('selectedPlacesId'));
+        if(finalList.length > 0){
+            let arrUniquesPlaces = [ ...new Set(finalList) ];
+            localStorage.setItem('selectedPlacesId', JSON.stringify(arrUniquesPlaces));
+            //TODO: redirection vers la page d'accueil
+        } else {
+            alert("Vous devez sélectionner au moins un lieu pour votre destination");
+        }
+    }
+
     render() {
         return (
             <div className='Form'>
@@ -366,7 +361,10 @@ class Form extends Component {
                 <div className="Suggestions">
                     {this.state.mapIsVisible ? 
                     (<div className="SelectedPlaces">
-                        <p>Votre sélection</p>
+                        <div>
+                            <p>Votre sélection</p>
+                            <button onClick={this.saveFinalList} className="sendFinalList">Enregistrer</button>
+                        </div>                        
                     </div>) : null}
                     <div id='map'></div>
                 </div>
