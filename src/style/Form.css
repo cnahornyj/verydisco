@@ -94,6 +94,13 @@ button {
     border-top-left-radius: 30px;
 }
 
+.SelectedPlaces > p {
+    border-bottom: 1px solid lightgrey;
+    font-size: 16px;
+    padding: 10px 10px;
+    margin: 1px;
+}
+
 .SelectedPlaces > div {
     display: flex;
     justify-content: space-between;
