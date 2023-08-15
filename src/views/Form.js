@@ -29,6 +29,7 @@ class Form extends Component {
         { place: "amusement_park", isChecked: false },
       ],
       mapIsVisible: false,
+      selectedPlaces: [],
     };
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
@@ -65,24 +66,25 @@ class Form extends Component {
   onFormSubmit(e) {
     e.preventDefault();
 
+    //* A la soumission du formulaire on initialise un tableau vide dans lequel sera poussé les lieux sélectionnés par l'utilisateur
     if (localStorage.getItem("selectedPlacesId") == null) {
       localStorage.setItem("selectedPlacesId", "[]");
     }
 
     //TODO: stocker tout d'abord la ville et un tableau vide (à voir pour la structure)
 
+    //* On récupère les coordonnées géographiques du centre de la ville sélectionnée
     var cityCoordinates = this.state.listCities.cities.find(
       (city) => city.name === this.state.city
     );
 
+    //* On passe la latitude et la longitude du centre de la ville dans un objet
     var center = {
       lat: cityCoordinates.lat,
       lng: cityCoordinates.lng,
     };
 
-    console.log(center);
-
-    // Verify if a city has been selected
+    //* On vérifie si une ville a été sélectionnée
     if (!this.state.city) {
       alert("Select a city!");
     } else {
@@ -92,34 +94,35 @@ class Form extends Component {
           selectedTypes.push(this.state.typesPlaces[i].place);
         }
       }
-
-      // Verify if at least a type of place has been selected and send requests
+      //* On vérifie si au moins un type de lieu a été sélectionné
       if (selectedTypes.length > 0) {
         for (i in selectedTypes) {
           console.log("On passe ici");
+          //* On envoie la/les requêtes
           this.findPlaces(center, selectedTypes[i]);
         }
       } else {
+        //* On affiche un message d'erreur
         alert("Selectionnez au moins un type de lieu !");
       }
     }
   }
 
   findPlaces(center, type) {
+
     let map;
-    let infowindow;
-    infowindow = new window.google.maps.InfoWindow();
 
     map = new window.google.maps.Map(document.getElementById("map"), {
       center: center,
-      zoom: 10,
+      zoom: 12,
     });
 
     let mapOptions = {
       center: center,
-      zoom: 10,
+      zoom: 12,
     };
 
+    //* On définit un rayon plus ou moins conséquent selon le type de lieu sélectionné
     let radius;
     switch (type) {
       case "zoo":
@@ -155,146 +158,81 @@ class Form extends Component {
 
     service.nearbySearch(
       { location: mapOptions.center, radius: radius, type: type },
-      (results, status, pagination) => {
+      (results, status) => {
         console.log(status, results);
         if (status !== "OK" || !results) {
           console.log("Il y a une erreur lors de la récupération des données");
         } else {
           this.setState({ mapIsVisible: true });
+          //* Pour chaque lieu on récupère l'id
+          for(let i = 0; i < results.length; i++){
+            var request = {
+                placeId: results[i].place_id
+            };
+            //* Et on le passe à la fonction getDetails pour plus de détails sur le lieu
+            getDetails(mapOptions.center,request);
+          };
+        }
+      }
+    );
 
-          for (let i = 0; i < results.length; i++) {
-            createMarker(results[i]);
-          }
-
-          function createMarker(place) {
-            if (!place.geometry || !place.geometry.location) return;
-
+    function getDetails(center, request){
+      let infowindow;
+      infowindow = new window.google.maps.InfoWindow();
+  
+      map = new window.google.maps.Map(document.getElementById("map"), {
+        center: center,
+        zoom: 17,
+      });
+      service = new window.google.maps.places.PlacesService(map);
+      service.getDetails(request, function(place, status) {
+        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+            console.log(place);
             let marker = new window.google.maps.Marker({
-              map,
-              position: place.geometry.location,
+                map,
+                position: place.geometry.location,
             });
-
+            //* On crée un marqueur pour chaque lieu, au clic on affiche des informations sur le lieu
             window.google.maps.event.addListener(marker, "click", () => {
               let content = document.createElement("div");
-
-              let nameElement = document.createElement("h2");
-              nameElement.textContent = place.name;
-              content.appendChild(nameElement);
-
+              let placeName = document.createElement("h2");
+              placeName.textContent = place.name;
+              content.appendChild(placeName);
               if (place.rating > 0) {
                 let placeRating = document.createElement("p");
                 placeRating.textContent = place.rating + "/5 ⭐";
                 content.appendChild(placeRating);
               }
-
-              let likeElement = document.createElement("button");
-              likeElement.classList.add("likeBtn");
-              likeElement.textContent = "❤";
-              likeElement.addEventListener("click", function () {
-                likeElement.classList.add("likeBtnLiked");
-                addPlaceIdToList(place.place_id);
+              if (place.website !== undefined) {
+                let placeWebsite = document.createElement("a");
+                placeWebsite.href = place.website;
+                placeWebsite.target = "_blank";
+                placeWebsite.textContent = "Site web";
+                content.appendChild(placeWebsite);
+              }
+              let likeBtn = document.createElement("button");
+              likeBtn.classList.add("likeBtn");
+              likeBtn.textContent = "❤";
+              likeBtn.addEventListener("click", function () {
+                likeBtn.classList.add("likeBtnLiked");
+                let oldArray = JSON.parse(localStorage.getItem("selectedPlacesId"));
+                let newPlace = {
+                  id: place.place_id,
+                  name: place.name,
+                };
+                oldArray.push(newPlace);
+                localStorage.setItem("selectedPlacesId", JSON.stringify(oldArray));
+                //TODO: le state n'est pas accessible à ce niveau utiliser Redux ?
+                //this.setState((prevState) => ({ city: (prevState.city = value) }));
               });
-              content.appendChild(likeElement);
-
+              content.appendChild(likeBtn);
               infowindow.setContent(content);
               infowindow.open(map, marker);
-            });
-          }
-
-          function addPlaceIdToList(id) {
-            let oldArray = JSON.parse(localStorage.getItem("selectedPlacesId"));
-            oldArray.push(id);
-            localStorage.setItem("selectedPlacesId", JSON.stringify(oldArray));
-          }
+          });
         }
-      }
-    );
-
-    //TODO: afficher la section Votre sélection en conséquence
-    //TODO: ajouter un bouton J'ai terminé ma sélection à la section Votre sélection
+      });
+    }
   }
-
-  // findInformationsPlace(){
-  // loader
-  // .load()
-  // .then((google) => {
-  //     //! Les variables mapOptions & map ne seront pas utilisées à ce niveau à terme, ici elles sont utilisées pour un test préalable (test OK)
-  //     //! Le centre correspond à la ville de Lyon (il faudra passer le centre selon la ville sélectionnée)
-  //     var mapOptions = {
-  //     center: {
-  //         lat: 45.765,
-  //         lng: 4.832
-  //     },
-  //     zoom: 17
-  //     };
-  //     var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-  //     var infowindow = new google.maps.InfoWindow();
-  //     var service = new google.maps.places.PlacesService(map);
-  //     var ids = localStorage.getItem("placesId");
-  //     var placesId = ids.replace('[','').replace(']','').replaceAll('"','').split(',');
-
-  //     for(let i = 0; i < placesId.length; i++){
-  //     var request = {
-  //         placeId: placesId[i]
-  //     };
-  //     service.getDetails(request, function(place, status) {
-  //         // console.log("Statut de la requête:"+status)
-  //         if (status === google.maps.places.PlacesServiceStatus.OK) {
-  //         //TODO: Add markers on map and a like button on every marker if click event on push placeId in localStorage
-  //         var marker = new google.maps.Marker({
-  //             map: map,
-  //             position: place.geometry.location
-  //         });
-  //         google.maps.event.addListener(marker, 'click', function() {
-  //             //TODO: Passer les infos relatives au lieu
-  //             const content = document.createElement("div");
-
-  //             const nameElement = document.createElement("h2");
-  //             nameElement.textContent = place.name;
-  //             content.appendChild(nameElement);
-
-  //             const placeAddressElement = document.createElement("p");
-  //             placeAddressElement.textContent = place.formatted_address;
-  //             content.appendChild(placeAddressElement);
-
-  //             if(place.website !== undefined) {
-  //             const websiteElement = document.createElement("a");
-  //             websiteElement.href = place.website;
-  //             websiteElement.target = "_blank";
-  //             websiteElement.textContent = "Site web";
-  //             content.appendChild(websiteElement);
-  //             }
-
-  //             if(place.user_ratings_total > 0) {
-  //             const placeRatingElement = document.createElement("p");
-  //             placeRatingElement.textContent = place.rating + "/5 ⭐";
-  //             content.appendChild(placeRatingElement);
-  //             const nbOfRatings = document.createElement("p");
-  //             nbOfRatings.textContent = place.user_ratings_total + " avis";
-  //             content.appendChild(nbOfRatings);
-  //             }
-
-  //             const likeElement = document.createElement("button");
-  //             likeElement.classList.add("likeBtn");
-  //             likeElement.textContent = "❤";
-  //             likeElement.addEventListener("click", function(){
-  //             likeElement.classList.add("likeBtnLiked");
-  //             })
-  //             content.appendChild(likeElement);
-
-  //             infowindow.setContent(content);
-  //             infowindow.open(map, this);
-
-  //         });
-  //         }
-  //     });
-  //     }
-
-  // })
-  // .catch(e => {
-  //     // do something
-  // });
-  // }
 
   saveFinalList() {
     let finalList = JSON.parse(localStorage.getItem("selectedPlacesId"));
@@ -313,7 +251,10 @@ class Form extends Component {
   render() {
     return (
       <div className="Form">
-        <form onSubmit={this.onFormSubmit} style={{filter: this.state.mapIsVisible ? "blur(5px)" : null}}>
+        <form
+          onSubmit={this.onFormSubmit}
+          style={{ filter: this.state.mapIsVisible ? "blur(5px)" : null }}
+        >
           <img src={cityicon} alt="city icon" />
           <div className="cities">
             <p>Ville</p>
@@ -405,9 +346,18 @@ class Form extends Component {
                   Enregistrer
                 </button>
               </div>
+              <p>Un lieu</p>
+              {this.state.selectedPlaces.map((element, index) => {
+                return (
+                  <div key={index}>
+                    <h2>{element}</h2>
+                  </div>
+                );
+              })}
             </div>
           ) : null}
-          <div id="map"
+          <div
+            id="map"
             style={{
               width: this.state.mapIsVisible ? "500px" : "0",
               height: this.state.mapIsVisible ? "500px" : "0",
