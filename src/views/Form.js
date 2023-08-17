@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from 'react-redux';
 import "../style/Form.css";
 import aquarium from "../assets/aquarium_dark_icon.png";
 import cocktail from "../assets/cocktail_dark_icon.png";
@@ -29,7 +30,6 @@ class Form extends Component {
         { place: "amusement_park", isChecked: false },
       ],
       mapIsVisible: false,
-      selectedPlaces: [],
     };
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
@@ -59,8 +59,11 @@ class Form extends Component {
           : obj
       ),
     }));
-
-    console.log("List of places and values: ", this.state.typesPlaces);
+    console.log("Liste des lieux sélectionnés ou non: ");
+    for (let i = 0; i < this.state.typesPlaces.length; i++) {
+      console.log(this.state.typesPlaces[i]);
+      
+    }
   }
 
   onFormSubmit(e) {
@@ -88,6 +91,7 @@ class Form extends Component {
     if (!this.state.city) {
       alert("Select a city!");
     } else {
+      this.props.addCity(this.state.city);
       var selectedTypes = [];
       for (var i = 0; i < this.state.typesPlaces.length; i++) {
         if (this.state.typesPlaces[i].isChecked) {
@@ -164,74 +168,58 @@ class Form extends Component {
           console.log("Il y a une erreur lors de la récupération des données");
         } else {
           this.setState({ mapIsVisible: true });
+
+          let infowindow;
+          infowindow = new window.google.maps.InfoWindow();
           //* Pour chaque lieu on récupère l'id
           for(let i = 0; i < results.length; i++){
             var request = {
                 placeId: results[i].place_id
             };
             //* Et on le passe à la fonction getDetails pour plus de détails sur le lieu
-            getDetails(mapOptions.center,request);
+            service.getDetails(request, (place, status) => {
+              if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+                  console.log(place);
+                  console.log(this);
+                  let marker = new window.google.maps.Marker({
+                      map,
+                      position: place.geometry.location,
+                  });
+                  //* On crée un marqueur pour chaque lieu, au clic on affiche des informations sur le lieu
+                  window.google.maps.event.addListener(marker, "click", () => {
+                    let content = document.createElement("div");
+                    let placeName = document.createElement("h2");
+                    placeName.textContent = place.name;
+                    content.appendChild(placeName);
+                    if (place.rating > 0) {
+                      let placeRating = document.createElement("p");
+                      placeRating.textContent = place.rating + "/5 ⭐";
+                      content.appendChild(placeRating);
+                    }
+                    if (place.website !== undefined) {
+                      let placeWebsite = document.createElement("a");
+                      placeWebsite.href = place.website;
+                      placeWebsite.target = "_blank";
+                      placeWebsite.textContent = "Site web";
+                      content.appendChild(placeWebsite);
+                    }
+                    let likeBtn = document.createElement("button");
+                    likeBtn.classList.add("likeBtn");
+                    likeBtn.textContent = "❤";
+                    likeBtn.addEventListener("click", () => {
+                      likeBtn.classList.add("likeBtnLiked");
+                      this.props.prependPlace(place);
+                    });
+                    content.appendChild(likeBtn);
+                    infowindow.setContent(content);
+                    infowindow.open(map, marker);
+                });
+              }
+            });
           };
         }
       }
     );
-
-    function getDetails(center, request){
-      let infowindow;
-      infowindow = new window.google.maps.InfoWindow();
-  
-      map = new window.google.maps.Map(document.getElementById("map"), {
-        center: center,
-        zoom: 17,
-      });
-      service = new window.google.maps.places.PlacesService(map);
-      service.getDetails(request, function(place, status) {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-            console.log(place);
-            let marker = new window.google.maps.Marker({
-                map,
-                position: place.geometry.location,
-            });
-            //* On crée un marqueur pour chaque lieu, au clic on affiche des informations sur le lieu
-            window.google.maps.event.addListener(marker, "click", () => {
-              let content = document.createElement("div");
-              let placeName = document.createElement("h2");
-              placeName.textContent = place.name;
-              content.appendChild(placeName);
-              if (place.rating > 0) {
-                let placeRating = document.createElement("p");
-                placeRating.textContent = place.rating + "/5 ⭐";
-                content.appendChild(placeRating);
-              }
-              if (place.website !== undefined) {
-                let placeWebsite = document.createElement("a");
-                placeWebsite.href = place.website;
-                placeWebsite.target = "_blank";
-                placeWebsite.textContent = "Site web";
-                content.appendChild(placeWebsite);
-              }
-              let likeBtn = document.createElement("button");
-              likeBtn.classList.add("likeBtn");
-              likeBtn.textContent = "❤";
-              likeBtn.addEventListener("click", function () {
-                likeBtn.classList.add("likeBtnLiked");
-                let oldArray = JSON.parse(localStorage.getItem("selectedPlacesId"));
-                let newPlace = {
-                  id: place.place_id,
-                  name: place.name,
-                };
-                oldArray.push(newPlace);
-                localStorage.setItem("selectedPlacesId", JSON.stringify(oldArray));
-                //TODO: le state n'est pas accessible à ce niveau utiliser Redux ?
-                //this.setState((prevState) => ({ city: (prevState.city = value) }));
-              });
-              content.appendChild(likeBtn);
-              infowindow.setContent(content);
-              infowindow.open(map, marker);
-          });
-        }
-      });
-    }
   }
 
   saveFinalList() {
@@ -346,14 +334,10 @@ class Form extends Component {
                   Enregistrer
                 </button>
               </div>
+              {this.props.placesSelected.map((place) => (
+                <p key={place.placeId}>{place.name}</p>
+              ))}
               <p>Un lieu</p>
-              {this.state.selectedPlaces.map((element, index) => {
-                return (
-                  <div key={index}>
-                    <h2>{element}</h2>
-                  </div>
-                );
-              })}
             </div>
           ) : null}
           <div
@@ -371,4 +355,17 @@ class Form extends Component {
   }
 }
 
-export default Form;
+const mapStateToProps = (state) => {
+  return {
+    placesSelected: state.places 
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+      addCity: (city) => dispatch({ type: 'ADD_CITY', payload: city }),
+      prependPlace: (place) => dispatch({ type: 'PREPEND_PLACE', payload: place }),
+      deletePlace: () => dispatch({ type: 'DELETE_PLACE' })
+  }
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Form);
