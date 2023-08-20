@@ -6,12 +6,14 @@ const reduxDevtools =
 const initialState = {
   city: null,
   places: [],
+  destinations: []
 };
 
 // actions creator
 export const addCity = (payload) => ({ type: "ADD_CITY" });
 export const prependPlace = (payload) => ({ type: "PREPEND_PLACE" });
-export const deletePlace = (payload) => ({ type: "DELETE_PLACE"});
+export const deletePlace = (payload) => ({ type: "DELETE_PLACE" });
+export const addDestinationAndDetails = (payload) => ({type: "ADD_DESTINATIONS" });
 
 // reducer
 function placeReducer(state = initialState, action) {
@@ -30,6 +32,17 @@ function placeReducer(state = initialState, action) {
         return {
           ...state,
           places: state.places.filter(place => place.id !== action.payload)
+        };
+      case "ADD_DESTINATIONS":
+        return {
+          ...state,
+          //* Ici cela marche mais cela ne fonctionne pas lorsqu'on essaye avec payload il y a une nuance avec payload il ne semble pas récupérer la data
+          destinations: [...state.destinations, {
+            city: state.city,
+            places: state.places
+          }],
+          city: null,
+          places: []
         };
       default:
         return state;
