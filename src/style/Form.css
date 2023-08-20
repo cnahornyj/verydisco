@@ -131,3 +131,8 @@ button {
 .SelectedPlaces > div > .sendFinalList:hover {
     font-weight: bold;
 }
+
+.linkWebsite {
+    color: #06675e !important;
+    text-decoration: underline;
+}
