@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Navigate } from "react-router-dom";
 import { connect } from 'react-redux';
 import "../style/Form.css";
 import aquarium from "../assets/aquarium_dark_icon.png";
@@ -30,6 +31,7 @@ class Form extends Component {
         { place: "amusement_park", isChecked: false },
       ],
       mapIsVisible: false,
+      shouldRedirect: null
     };
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
@@ -40,18 +42,18 @@ class Form extends Component {
   };
 
   addOrRemoveTypePlace(e) {
-    // Replace icon by whitespace and retire it
+    //* Replace icon by whitespace and retire it
     var typePlace = e.target.alt.replace("icon", "").replace(/ /g, "");
     console.log("Location type selected: " + typePlace);
 
-    // Find type of place in array of objects typesPlaces
+    //* Trouver le type de lieu dans le tableau d'objets typesPlaces
     var placeSelected = this.state.typesPlaces.find(
       (type) => type.place === typePlace
     );
-    // Check the isChecked value of the type of place
+    //* Vérifie la valeur boléenne du type de lieu
     var isSelected = placeSelected.isChecked;
 
-    // Update the state typesPlaces with invert isChecked value of the type of place selected
+    //* Met à jour l'état typesPlaces avec la valeur inversée isChecked du type de lieu sélectionné
     this.setState((prevState) => ({
       typesPlaces: prevState.typesPlaces.map((obj) =>
         obj.place === typePlace
@@ -62,19 +64,11 @@ class Form extends Component {
     console.log("Liste des lieux sélectionnés ou non: ");
     for (let i = 0; i < this.state.typesPlaces.length; i++) {
       console.log(this.state.typesPlaces[i]);
-      
     }
   }
 
   onFormSubmit(e) {
     e.preventDefault();
-
-    //* A la soumission du formulaire on initialise un tableau vide dans lequel sera poussé les lieux sélectionnés par l'utilisateur
-    if (localStorage.getItem("selectedPlacesId") == null) {
-      localStorage.setItem("selectedPlacesId", "[]");
-    }
-
-    //TODO: stocker tout d'abord la ville et un tableau vide (à voir pour la structure)
 
     //* On récupère les coordonnées géographiques du centre de la ville sélectionnée
     var cityCoordinates = this.state.listCities.cities.find(
@@ -179,8 +173,7 @@ class Form extends Component {
             //* Et on le passe à la fonction getDetails pour plus de détails sur le lieu
             service.getDetails(request, (place, status) => {
               if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                  console.log(place);
-                  console.log(this);
+                  //console.log(place);
                   let marker = new window.google.maps.Marker({
                       map,
                       position: place.geometry.location,
@@ -201,6 +194,7 @@ class Form extends Component {
                       placeWebsite.href = place.website;
                       placeWebsite.target = "_blank";
                       placeWebsite.textContent = "Site web";
+                      placeWebsite.classList.add("linkWebsite");
                       content.appendChild(placeWebsite);
                     }
                     let likeBtn = document.createElement("button");
@@ -222,19 +216,10 @@ class Form extends Component {
     );
   }
 
-  saveFinalList() {
-    let finalList = JSON.parse(localStorage.getItem("selectedPlacesId"));
-    if (finalList.length > 0) {
-      let arrUniquesPlaces = [...new Set(finalList)];
-      localStorage.setItem(
-        "selectedPlacesId",
-        JSON.stringify(arrUniquesPlaces)
-      );
-      //TODO: redirection vers la page d'accueil
-    } else {
-      alert("Vous devez sélectionner au moins un lieu pour votre destination");
-    }
-  }
+  saveFinalList = () => {
+    this.props.addDestinationAndDetails();
+    this.setState({ shouldRedirect: true });
+  };
 
   render() {
     return (
@@ -334,10 +319,10 @@ class Form extends Component {
                   Enregistrer
                 </button>
               </div>
+              {/* On affiche la liste des lieux likés par l'utilisateur */}
               {this.props.placesSelected.map((place) => (
                 <p key={place.placeId}>{place.name}</p>
               ))}
-              <p>Un lieu</p>
             </div>
           ) : null}
           <div
@@ -350,6 +335,9 @@ class Form extends Component {
             }}
           ></div>
         </div>
+        {this.state.shouldRedirect ? (
+         <Navigate replace to="/" />
+       ) : null}
       </div>
     );
   }
@@ -357,7 +345,9 @@ class Form extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    placesSelected: state.places 
+    citySelected: state.city,
+    placesSelected: state.places,
+    destinations: state.destinations 
   }
 }
 
@@ -365,7 +355,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
       addCity: (city) => dispatch({ type: 'ADD_CITY', payload: city }),
       prependPlace: (place) => dispatch({ type: 'PREPEND_PLACE', payload: place }),
-      deletePlace: () => dispatch({ type: 'DELETE_PLACE' })
+      deletePlace: () => dispatch({ type: 'DELETE_PLACE' }),
+      addDestinationAndDetails: (destination) => dispatch({ type: 'ADD_DESTINATIONS' })
   }
 };
+
 export default connect(mapStateToProps, mapDispatchToProps)(Form);
