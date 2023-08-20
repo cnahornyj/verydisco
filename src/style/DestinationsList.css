@@ -1,0 +1,46 @@
+.DestinationsList {
+    padding: 15px 30px;
+}
+
+.HeaderDestinationList {
+    display: flex;
+    align-items: center;
+    place-content: space-between;
+}
+
+.HeaderDestinationList > h1 {
+    color: #393d44;
+}
+
+.HeaderDestinationList > a {
+    font-size: 14px;
+    background: #06675E;
+    color: whitesmoke;
+    padding: 15px 30px;
+    border: 2px solid #06675E;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.List {
+    display: flex;
+}
+
+.Destination {
+    position: relative;
+    width: 350px;
+    background: ghostwhite;
+    border: 1px solid lightgrey;
+    border-radius: 15px;
+    padding: 15px;
+    margin-right: 30px;
+    color: #393d44;
+}
+
+.Destination > button {
+    padding: 3px 10px;
+    position: absolute;
+    right: 20px;
+    bottom: 0px;
+    margin: 10px -10px;
+}
