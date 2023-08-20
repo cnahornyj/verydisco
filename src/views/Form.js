@@ -356,7 +356,7 @@ const mapDispatchToProps = (dispatch) => {
       addCity: (city) => dispatch({ type: 'ADD_CITY', payload: city }),
       prependPlace: (place) => dispatch({ type: 'PREPEND_PLACE', payload: place }),
       deletePlace: () => dispatch({ type: 'DELETE_PLACE' }),
-      addDestinationAndDetails: (destination) => dispatch({ type: 'ADD_DESTINATIONS' })
+      addDestinationAndDetails: () => dispatch({ type: 'ADD_DESTINATIONS' })
   }
 };
 
