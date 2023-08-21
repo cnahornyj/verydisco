@@ -26,6 +26,10 @@
     display: flex;
 }
 
+.List > .Flag {
+    width: 35px;
+}
+
 .Destination {
     position: relative;
     width: 350px;

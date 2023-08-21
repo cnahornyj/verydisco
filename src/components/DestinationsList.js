@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import '../style/DestinationsList.css';
 
 class DestinationsList extends Component {
+
   render() {
     return (
       <div className="DestinationsList">
@@ -16,6 +17,8 @@ class DestinationsList extends Component {
         <div className="List">
         {this.props.destinations.map((destination) => (
           <div className="Destination">
+            {/*TODO: afficher la première image récupéré (URL stocké lorsque l'utilisateur sauvegarde sa destination)   */}
+            <img src={`https://flagsapi.com/${destination.places[0].address_components[5].short_name}/flat/64.png`} alt="Drapeau" className="Flag"/>
             <p key={destination.city}>
               {destination.city.toUpperCase()},{" "}
               {destination.places[0].address_components[5].long_name}
