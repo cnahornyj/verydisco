@@ -174,9 +174,14 @@ class Form extends Component {
             service.getDetails(request, (place, status) => {
               if (status === window.google.maps.places.PlacesServiceStatus.OK) {
                   //console.log(place);
+                  var photos = place.photos;
+                  if (!photos) {
+                    return;
+                  }
                   let marker = new window.google.maps.Marker({
                       map,
                       position: place.geometry.location,
+                      icon: place.photos[0].getUrl({maxWidth: 50, maxHeight: 50})
                   });
                   //* On crée un marqueur pour chaque lieu, au clic on affiche des informations sur le lieu
                   window.google.maps.event.addListener(marker, "click", () => {
