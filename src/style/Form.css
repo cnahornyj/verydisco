@@ -136,3 +136,7 @@ button {
     color: #06675e !important;
     text-decoration: underline;
 }
+
+.ImgMarker {
+    border-radius: 10px;
+}

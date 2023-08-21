@@ -180,12 +180,22 @@ class Form extends Component {
                   }
                   let marker = new window.google.maps.Marker({
                       map,
-                      position: place.geometry.location,
-                      icon: place.photos[0].getUrl({maxWidth: 50, maxHeight: 50})
+                      position: place.geometry.location
                   });
                   //* On crée un marqueur pour chaque lieu, au clic on affiche des informations sur le lieu
                   window.google.maps.event.addListener(marker, "click", () => {
                     let content = document.createElement("div");
+
+                    if(photos.length > 0){
+                      let placeImg = document.createElement("img");
+                      placeImg.src = photos[0].getUrl({maxWidth: 230, maxHeight: 135});
+                      placeImg.classList.add("ImgMarker");
+                      content.appendChild(placeImg);
+                      //TODO: stocker l'url dans l'élément
+                      let urlImg = {url_main_image : photos[0].getUrl({maxWidth: 230, maxHeight: 135})};
+                      console.log(urlImg);
+                    }
+
                     let placeName = document.createElement("h2");
                     placeName.textContent = place.name;
                     content.appendChild(placeName);
@@ -210,6 +220,9 @@ class Form extends Component {
                       this.props.prependPlace(place);
                     });
                     content.appendChild(likeBtn);
+
+
+
                     infowindow.setContent(content);
                     infowindow.open(map, marker);
                 });
