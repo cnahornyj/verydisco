@@ -23,7 +23,7 @@ class DestinationsList extends Component {
               {destination.city.toUpperCase()},{" "}
               {destination.places[0].address_components[5].long_name}
             </p>
-            <button>i</button>
+            <Link to={`/destination/${destination.city}`}>i</Link>
           </div>
         ))}
         </div>
