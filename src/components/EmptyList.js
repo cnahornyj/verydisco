@@ -9,7 +9,7 @@ class EmptyList extends Component {
             <div className='EmptyList'>
                 <img src={emptyfolder} alt="empty folder icon" />
                 <p>Votre liste de destinations semble vide, vous pouvez en créer une via le bouton suivant : </p>
-                <Link to={"/form"} className="redirection">Créer une destination</Link>
+                <Link to={"/differentform"} className="redirection">Créer une destination</Link>
             </div>
         );
     }

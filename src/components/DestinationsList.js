@@ -10,7 +10,7 @@ class DestinationsList extends Component {
       <div className="DestinationsList">
         <div className="HeaderDestinationList">
           <h1>Vos destinations</h1>
-          <Link to={"/form"} className="redirection">
+          <Link to={"/differentform"} className="redirection">
             + Créer une destination
           </Link>
         </div>

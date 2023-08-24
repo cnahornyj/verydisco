@@ -1,6 +1,7 @@
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './views/Home';
 import Form from './views/Form';
+import DifferentForm from './views/DifferentForm';
 import DestinationPage from './views/DestinationPage';
 import './App.css';
 
@@ -14,6 +15,7 @@ class App extends Component {
         <Routes>
           <Route path="/" element={<Home/>}/>
           <Route path="/form" element={<Form/>}/>
+          <Route path="/differentform" element={<DifferentForm/>}/>
           <Route path="/destination/:city" element={<DestinationPage/>}/>
           <Route component={Error} />
         </Routes>
