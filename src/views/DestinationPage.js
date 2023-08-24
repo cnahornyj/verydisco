@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import Navbar from '../components/Navbar';
+import "../style/DestinationPage.css";
 //import Carousel from '../components/Carousel';
 
 class DestinationPage extends Component {
@@ -16,9 +17,23 @@ class DestinationPage extends Component {
         <Navbar/>    
         {this.state.destination != null ? (
             <div className='InformationsCity'>
-            <h2>{this.state.destination.city.toUpperCase()}</h2>
-            <p>{this.state.destination.places[0].address_components[5].long_name}</p>
-            <img src={`https://flagsapi.com/${this.state.destination.places[0].address_components[5].short_name}/flat/64.png`} alt="Drapeau" className="Flag"/>
+                <h1>{this.state.destination.city.toUpperCase()}</h1>
+                <div className='Country'>
+                    <h2>{this.state.destination.places[0].address_components[5].long_name}</h2>
+                    <img src={`https://flagsapi.com/${this.state.destination.places[0].address_components[5].short_name}/flat/64.png`} alt="Drapeau" className="Flag"/>
+                </div>
+                <div className='PlacesList'>
+                {this.state.destination.places.map((place) => (
+                    <div className='Place'>
+                        {/* <p>{place.photos[0].height}</p> */}
+                        <h3>{place.name}</h3>
+                        <p>{place.vicinity}</p>
+                        <p>{place.rating}/5 ✨</p>
+                        <p>Nombre d'avis : {place.user_ratings_total}</p>
+                        <a href={`${place.website}`} target="_blank" rel="noreferrer">Site web</a>
+                    </div>
+                ))}
+                </div>
             </div>
         ) : null}
         </div>
@@ -50,6 +65,7 @@ class DestinationPage extends Component {
         setTimeout(() => {
             console.log(this.state.destination);
         }, 200);
+        //TODO: faire appel à la fonction getPhotos de Places Photos
     }
 }
 
