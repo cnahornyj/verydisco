@@ -168,7 +168,8 @@ class Form extends Component {
           //* Pour chaque lieu on récupère l'id
           for(let i = 0; i < results.length; i++){
             var request = {
-                placeId: results[i].place_id
+                placeId: results[i].place_id,
+                fields: ['name', 'vicinity', 'rating', 'user_ratings_total', 'website', 'photos', 'geometry', 'address_components', 'editorial_summary', 'opening_hours']
             };
             //* Et on le passe à la fonction getDetails pour plus de détails sur le lieu
             service.getDetails(request, (place, status) => {
@@ -221,8 +222,6 @@ class Form extends Component {
                     });
                     content.appendChild(likeBtn);
 
-
-
                     infowindow.setContent(content);
                     infowindow.open(map, marker);
                 });
@@ -258,8 +257,6 @@ class Form extends Component {
           <div>
             <p>Types de lieux</p>
             <div className="TypesPlaces">
-              {/*<img src={aquarium} alt="zoo icon" onClick={e => alert(e.target.alt)}/>*/}
-              {/*//TODO Voir pour récupérer au clic sur la div l'attribut alt de la balise enfant */}
               <div className="TypePlace">
                 <img
                   src={aquarium}
