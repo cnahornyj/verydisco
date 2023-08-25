@@ -1,10 +1,31 @@
 .DifferentForm {
     display: flex;
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    margin-top: -100px;
+    margin-left: -250px;
 }
 
-.PlacesList {
-    width: 25%;
-    border: 1px solid grey;
+.SelectionsList {
+    width: 375px;
+    border-bottom: 1px solid grey;
+    border-left: 1px solid grey;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background: ghostwhite;
+}
+
+.SelectionsList > ul {
+    padding-left: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    list-style: none;
+}
+
+.SelectionsList > ul > li {
+    border-bottom: 1px solid lightgrey;
+    padding: 5px 15px;
 }
 
 .Title {
@@ -14,6 +35,7 @@
     place-content: space-around;
     background: #06675e;
     align-items: center;
+    border-top-left-radius: 15px;
 }
 
 .Title > h1 {
@@ -36,6 +58,11 @@
 #map {
     width: 750px;
     height: 500px;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+    border-top: 1px solid grey;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
 #pac-input{
