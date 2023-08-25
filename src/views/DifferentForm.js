@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import "../style/DifferentForm.css";
+import { connect } from 'react-redux';
+import { Navigate } from "react-router-dom";
 
 class DifferentForm extends Component {
   constructor(props) {
@@ -7,8 +9,11 @@ class DifferentForm extends Component {
 
     this.state = {
       city: null,
-      places: []
+      places: [],
+      shouldRedirect: null
     };
+
+    this.saveList = this.saveList.bind(this);
   }
 
   render() {
@@ -17,7 +22,7 @@ class DifferentForm extends Component {
         <div className="SelectionsList">
           <div className="Title">
             <h1>Votre sélection</h1>
-            <button>Enregistrer</button>
+            <button onClick={this.saveList}>Enregistrer</button>
           </div>
           <ul>
             {this.state.places.map((place) => (
@@ -34,6 +39,9 @@ class DifferentForm extends Component {
             placeholder="Entrez un lieu, une adresse.."
           />
         </div>
+        {this.state.shouldRedirect ? (
+         <Navigate replace to="/" />
+       ) : null}
       </div>
     );
   }
@@ -146,19 +154,33 @@ class DifferentForm extends Component {
   saveList(){
     //* Parcourir l'état places
     let places = this.state.places;
+
     //* On vérifie si la clé valeur ville est la même pour tous les objets
-    let isSameCity = places.every(place => place.address_components[5].long_name === places[0].address_components[5].long_name);
     //* Si ça n'est pas le cas on maj l'état city avec le pays si c'est OK on maj l'état city avec la ville
-    isSameCity ? this.setState({ city: places[0].address_components[6].long_name }) : this.setState({ city: places[0].address_components[5].long_name });
-    //TODO: passer l'objet à la méthode addDestination du store Redux
+    //! Non opérationnel selon la ville, le continent...
+    // let isSameCity = places.every(place => place.address_components[5].long_name === places[0].address_components[5].long_name);
+    // isSameCity ? this.setState({ city: places[0].address_components[6].long_name }) : this.setState({ city: places[0].address_components[5].long_name });
+    
+    let countryIndex = places[0].address_components.length-2;
+    this.setState({ city: places[0].address_components[countryIndex].long_name });
+
     let city = this.state.city;
     if(places.length > 0 && city != null){
-      let obj = {
+      let destination = {
         city: this.state.city,
         places: this.state.places
       }
+      console.log(destination);
+      this.props.addDestination(destination);
+      this.setState({ shouldRedirect: true });
     }
   }
 }
 
-export default DifferentForm;
+const mapDispatchToProps = (dispatch) => {
+  return {
+      addDestination: (payload) => dispatch({ type: 'ADD_DESTINATION', payload })
+  }
+};
+
+export default connect(null, mapDispatchToProps)(DifferentForm);
