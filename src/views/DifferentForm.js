@@ -60,6 +60,7 @@ class DifferentForm extends Component {
         "opening_hours",
         "photos",
         "reviews",
+        "type"
       ],
     });
 
@@ -148,11 +149,7 @@ class DifferentForm extends Component {
     //* On vérifie si la clé valeur ville est la même pour tous les objets
     let isSameCity = places.every(place => place.address_components[5].long_name === places[0].address_components[5].long_name);
     //* Si ça n'est pas le cas on maj l'état city avec le pays si c'est OK on maj l'état city avec la ville
-    if(!isSameCity){
-      this.setState({ city: places[0].address_components[6].long_name });
-    } else {
-      this.setState({ city: places[0].address_components[5].long_name });
-    }
+    isSameCity ? this.setState({ city: places[0].address_components[6].long_name }) : this.setState({ city: places[0].address_components[5].long_name });
     //TODO: passer l'objet à la méthode addDestination du store Redux
     let city = this.state.city;
     if(places.length > 0 && city != null){
