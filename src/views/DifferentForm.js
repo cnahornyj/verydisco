@@ -5,18 +5,25 @@ class DifferentForm extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      city: null,
+      places: []
+    };
   }
 
   render() {
     return (
       <div className="DifferentForm">
-        <div className="PlacesList">
-          {/* Ajouter le map sur les lieux sélectionnés par l'utilisateur  */}
+        <div className="SelectionsList">
           <div className="Title">
             <h1>Votre sélection</h1>
             <button>Enregistrer</button>
           </div>
+          <ul>
+            {this.state.places.map((place) => (
+                <li key={place.placeId}>{place.name}</li>
+              ))}
+          </ul>
         </div>
         <div className="Map">
           <div id="map"></div>
@@ -26,12 +33,6 @@ class DifferentForm extends Component {
             type="text"
             placeholder="Entrez un lieu, une adresse.."
           />
-          <div id="infowindow-content">
-            <span id="place-name" class="title"></span>
-            <br />
-            <br />
-            <span id="place-address"></span>
-          </div>
         </div>
       </div>
     );
@@ -91,22 +92,76 @@ class DifferentForm extends Component {
         map.setZoom(17);
       }
 
-      // Set the position of the marker using the place ID and location.
-      // @ts-ignore This should be in @typings/googlemaps.
+      //* Set the position of the marker using the place ID and location.
       marker.setPlace({
         placeId: place.place_id,
         location: place.geometry.location,
       });
       marker.setVisible(true);
       console.log(place);
-      infowindowContent.children.namedItem("place-name").textContent =
-        place.name;
-      infowindowContent.children.namedItem("place-address").textContent =
-        place.formatted_address;
+
+      let content = document.createElement("div");
+
+      if(place.photos){
+        let placeImg = document.createElement("img");
+        placeImg.src = place.photos[0].getUrl({maxWidth: 230, maxHeight: 135});
+        placeImg.classList.add("ImgMarker");
+        content.appendChild(placeImg);
+      }
+
+      let placeName = document.createElement("h2");
+      placeName.textContent = place.name;
+      content.appendChild(placeName);
+      if (place.rating > 0) {
+        let placeRating = document.createElement("p");
+        placeRating.textContent = place.rating + "/5 ⭐";
+        content.appendChild(placeRating);
+      }
+      if (place.website !== undefined) {
+        let placeWebsite = document.createElement("a");
+        placeWebsite.href = place.website;
+        placeWebsite.target = "_blank";
+        placeWebsite.textContent = "Site web";
+        placeWebsite.classList.add("linkWebsite");
+        content.appendChild(placeWebsite);
+      }
+      let likeBtn = document.createElement("button");
+      likeBtn.classList.add("likeBtn");
+      likeBtn.textContent = "❤";
+      likeBtn.addEventListener("click", () => {
+        likeBtn.classList.add("likeBtnLiked");
+        this.setState({places: [...this.state.places, place]});
+        setTimeout(() => {
+          console.log(this.state.places);
+        }, 2000);
+      });
+      content.appendChild(likeBtn);
+
+      infowindow.setContent(content);
       infowindow.open(map, marker);
     });
   }
 
+  saveList(){
+    //* Parcourir l'état places
+    let places = this.state.places;
+    //* On vérifie si la clé valeur ville est la même pour tous les objets
+    let isSameCity = places.every(place => place.address_components[5].long_name === places[0].address_components[5].long_name);
+    //* Si ça n'est pas le cas on maj l'état city avec le pays si c'est OK on maj l'état city avec la ville
+    if(!isSameCity){
+      this.setState({ city: places[0].address_components[6].long_name });
+    } else {
+      this.setState({ city: places[0].address_components[5].long_name });
+    }
+    //TODO: passer l'objet à la méthode addDestination du store Redux
+    let city = this.state.city;
+    if(places.length > 0 && city != null){
+      let obj = {
+        city: this.state.city,
+        places: this.state.places
+      }
+    }
+  }
 }
 
 export default DifferentForm;
