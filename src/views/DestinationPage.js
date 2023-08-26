@@ -19,8 +19,7 @@ class DestinationPage extends Component {
             <div className='InformationsCity'>
                 <h1>{this.state.destination.city.toUpperCase()}</h1>
                 <div className='Country'>
-                    <h2>{this.state.destination.places[0].address_components[5].long_name}</h2>
-                    <img src={`https://flagsapi.com/${this.state.destination.places[0].address_components[5].short_name}/flat/64.png`} alt="Drapeau" className="Flag"/>
+                    <img src={`https://flagsapi.com/${this.state.destination.places[0].address_components[this.state.destination.places[0].address_components.length-2].short_name}/flat/64.png`} alt="Drapeau" className="Flag"/>
                 </div>
                 <div className='PlacesList'>
                 {this.state.destination.places.map((place) => (
