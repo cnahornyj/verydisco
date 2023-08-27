@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../style/DifferentForm.css";
-import { connect } from 'react-redux';
+import Navbar from "../components/Navbar";
+import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 
 class DifferentForm extends Component {
@@ -10,7 +11,7 @@ class DifferentForm extends Component {
     this.state = {
       city: null,
       places: [],
-      shouldRedirect: null
+      shouldRedirect: null,
     };
 
     this.saveList = this.saveList.bind(this);
@@ -18,30 +19,31 @@ class DifferentForm extends Component {
 
   render() {
     return (
-      <div className="DifferentForm">
-        <div className="SelectionsList">
-          <div className="Title">
-            <h1>Votre sélection</h1>
-            <button onClick={this.saveList}>Enregistrer</button>
-          </div>
-          <ul>
-            {this.state.places.map((place) => (
+      <div>
+        <Navbar/>
+        <div className="DifferentForm">
+          <div className="SelectionsList">
+            <div className="Title">
+              <h1>Votre sélection</h1>
+              <button onClick={this.saveList}>Enregistrer</button>
+            </div>
+            <ul>
+              {this.state.places.map((place) => (
                 <li key={place.placeId}>{place.name}</li>
               ))}
-          </ul>
+            </ul>
+          </div>
+          <div className="Map">
+            <div id="map"></div>
+            <input
+              id="pac-input"
+              class="controls"
+              type="text"
+              placeholder="Entrez un lieu, une adresse.."
+            />
+          </div>
+          {this.state.shouldRedirect ? <Navigate replace to="/" /> : null}
         </div>
-        <div className="Map">
-          <div id="map"></div>
-          <input
-            id="pac-input"
-            class="controls"
-            type="text"
-            placeholder="Entrez un lieu, une adresse.."
-          />
-        </div>
-        {this.state.shouldRedirect ? (
-         <Navigate replace to="/" />
-       ) : null}
       </div>
     );
   }
@@ -68,7 +70,7 @@ class DifferentForm extends Component {
         "opening_hours",
         "photos",
         "reviews",
-        "type"
+        "type",
       ],
     });
 
@@ -111,11 +113,21 @@ class DifferentForm extends Component {
 
       let content = document.createElement("div");
 
-      if(place.photos){
+      if (place.photos) {
         let placeImg = document.createElement("img");
-        placeImg.src = place.photos[0].getUrl({maxWidth: 230, maxHeight: 135});
+        placeImg.src = place.photos[0].getUrl({
+          maxWidth: 230,
+          maxHeight: 135,
+        });
         placeImg.classList.add("ImgMarker");
         content.appendChild(placeImg);
+
+        //* On stocke l'URL des images du lieu
+        for (let i = 0; i < place.photos.length; i++) {
+          let url = place.photos[i].getUrl({ maxWidth: 460, maxHeight: 270 }).replaceAll('"','');
+          Object.assign(place.photos[i], { imgUrl: url });
+          console.log(place);
+        }
       }
 
       let placeName = document.createElement("h2");
@@ -139,7 +151,7 @@ class DifferentForm extends Component {
       likeBtn.textContent = "❤";
       likeBtn.addEventListener("click", () => {
         likeBtn.classList.add("likeBtnLiked");
-        this.setState({places: [...this.state.places, place]});
+        this.setState({ places: [...this.state.places, place] });
         setTimeout(() => {
           console.log(this.state.places);
         }, 2000);
@@ -151,7 +163,7 @@ class DifferentForm extends Component {
     });
   }
 
-  saveList(){
+  saveList() {
     //* Parcourir l'état places
     let places = this.state.places;
 
@@ -160,16 +172,18 @@ class DifferentForm extends Component {
     //! Non opérationnel selon la ville, le continent...
     // let isSameCity = places.every(place => place.address_components[5].long_name === places[0].address_components[5].long_name);
     // isSameCity ? this.setState({ city: places[0].address_components[6].long_name }) : this.setState({ city: places[0].address_components[5].long_name });
-    
-    let countryIndex = places[0].address_components.length-2;
-    this.setState({ city: places[0].address_components[countryIndex].long_name });
+
+    let countryIndex = places[0].address_components.length - 2;
+    this.setState({
+      city: places[0].address_components[countryIndex].long_name,
+    });
 
     let city = this.state.city;
-    if(places.length > 0 && city != null){
+    if (places.length > 0 && city != null) {
       let destination = {
         city: this.state.city,
-        places: this.state.places
-      }
+        places: this.state.places,
+      };
       console.log(destination);
       this.props.addDestination(destination);
       this.setState({ shouldRedirect: true });
@@ -179,8 +193,8 @@ class DifferentForm extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-      addDestination: (payload) => dispatch({ type: 'ADD_DESTINATION', payload })
-  }
+    addDestination: (payload) => dispatch({ type: "ADD_DESTINATION", payload }),
+  };
 };
 
 export default connect(null, mapDispatchToProps)(DifferentForm);
