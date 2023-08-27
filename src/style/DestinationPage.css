@@ -30,9 +30,22 @@
 }
 
 .Place {
+    display: flex;
     background: ghostwhite;
     border: 1px solid lightgrey;
-    padding: 15px;
+    border-radius: 15px;
     margin: 30px 15px 30px 0px;
-    width: 450px;
+    width: 600px;
+    height: fit-content;
+}
+
+.Place > img {
+    width: 202px;
+    height: 270px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+.InformationsPlace {
+    padding-left: 15px;
 }

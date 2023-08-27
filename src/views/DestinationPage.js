@@ -24,12 +24,21 @@ class DestinationPage extends Component {
                 <div className='PlacesList'>
                 {this.state.destination.places.map((place) => (
                     <div className='Place'>
-                        {/* <p>{place.photos[0].height}</p> */}
-                        <h3>{place.name}</h3>
-                        <p>{place.vicinity}</p>
-                        <p>{place.rating}/5 ✨</p>
-                        <p>Nombre d'avis : {place.user_ratings_total}</p>
-                        <a href={`${place.website}`} target="_blank" rel="noreferrer">Site web</a>
+
+                        {/* Pour récupérer toutes les photos du lieu */}
+                        {/* {place.photos.map((photo) =>
+                            <img src={`${photo.imgUrl}`} alt="" srcset="" />
+                        )} */}
+
+                        {place.photos.length > 0 ? <img src={`${place.photos[0].imgUrl}`} alt="" srcset="" /> : null}
+                
+                        <div className='InformationsPlace'>
+                            <h3>{place.name}</h3>
+                            <p>{place.vicinity}</p>
+                            <p>{place.rating}/5 ✨</p>
+                            <p>Nombre d'avis : {place.user_ratings_total}</p>
+                            <a href={`${place.website}`} target="_blank" rel="noreferrer">Site web</a>
+                        </div>
                     </div>
                 ))}
                 </div>
@@ -52,7 +61,7 @@ class DestinationPage extends Component {
     //* Récupérer l'url de la page et la ville pour trouver l'index correspondant
     componentDidMount() {
         const destinations = this.props.destinations;
-        console.log(destinations);
+        // console.log(destinations);
         const url = window.location.href;
         const lastSlash = url.lastIndexOf("/");
         const city = url.substring(lastSlash + 1);
@@ -62,7 +71,10 @@ class DestinationPage extends Component {
           destination: destination,
         });
         setTimeout(() => {
-            console.log(this.state.destination);
+            // console.log(this.state.destination.places);
+            for (let i = 0; i < this.state.destination.places.length; i++) {
+                // console.log(this.state.destination.places[i].photos.length);
+            }
         }, 200);
         //TODO: faire appel à la fonction getPhotos de Places Photos
     }
