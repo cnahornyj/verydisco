@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import Navbar from '../components/Navbar';
+import PlaceModal from '../components/PlaceModal';
 import "../style/DestinationPage.css";
 //import Carousel from '../components/Carousel';
 
@@ -42,6 +43,7 @@ class DestinationPage extends Component {
                     </div>
                 ))}
                 </div>
+                <PlaceModal name="Nom du lieu" rating="4" isOpen="true" user_ratings_total="1256" formatted_address="3 rue Jules Ferry 69800 SAINT PRIEST" hours="LUNDI 12:00 - 18:00"/>
             </div>
         ) : null}
         </div>

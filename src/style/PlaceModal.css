@@ -1,0 +1,48 @@
+.PlaceModal {
+    display: flex;
+    background: #FDFDFD;
+    border: 1px solid lightgrey;
+    border-radius: 15px;
+    width: 50%;
+    margin: auto;
+    padding: 15px 0;
+}
+
+.PlaceModal > div {
+    width: 50%;
+}
+
+.PlaceModal > div:first-child {
+    border-right: 1px solid dimgrey;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.PlaceModal > div:nth-child(2) {
+    padding-left: 30px;
+}
+
+.MainTitle {
+    display: flex;
+    place-items: center;
+}
+
+.Titre {
+    font-size: 1.17em;
+}
+
+.Rating {
+    padding-left: 15px;
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.IsOpen {
+    margin-left: auto;
+}
+
+.Summary {
+    text-align: justify;
+    margin: 0;
+    font-weight: 500;
+}
