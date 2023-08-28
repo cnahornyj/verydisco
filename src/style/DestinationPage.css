@@ -49,3 +49,27 @@
 .InformationsPlace {
     padding-left: 15px;
 }
+
+.InformationsPlace > button {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.InformationsPlace > button > img {
+    position: relative;
+    top: -110px;
+    left: 145px;
+}
+
+.InformationsPlace > a {
+    color: #8f8ff3;
+}
+
+.EditorialSummary {
+    font-size: 12px;
+}
+
+.InfosIcon {
+    width: 30px;
+}
