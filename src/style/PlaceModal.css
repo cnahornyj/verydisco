@@ -1,9 +1,9 @@
 .PlaceModal {
     display: flex;
-    background: #FDFDFD;
+    background: #f8f8ff;
     border: 1px solid lightgrey;
     border-radius: 15px;
-    width: 50%;
+    width: 99%;
     margin: auto;
     padding: 15px 0;
 }
@@ -27,8 +27,14 @@
     place-items: center;
 }
 
+.MainTitle > p:first-child {
+    font-size: 1.25em;
+    font-weight: bold;
+}
+
 .Titre {
     font-size: 1.17em;
+    font-weight: bold;
 }
 
 .Rating {
@@ -39,10 +45,22 @@
 
 .IsOpen {
     margin-left: auto;
+    font-size: 12px;
 }
 
 .Summary {
-    text-align: justify;
     margin: 0;
-    font-weight: 500;
+}
+
+.UserReviewImg {
+    width: 60px;
+}
+
+.TextReview {
+    font-size: 14px;
+    padding-left: 15px;
+}
+
+.OpenHours {
+    line-height: 10px;
 }
