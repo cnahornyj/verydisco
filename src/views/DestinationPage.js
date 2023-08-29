@@ -26,7 +26,7 @@ class DestinationPage extends Component {
                 <div className='Country'>
                     <img src={`https://flagsapi.com/${this.state.destination.places[0].address_components[this.state.destination.places[0].address_components.length-2].short_name}/flat/64.png`} alt="Drapeau" className="Flag"/>
                 </div>
-                <div className='PlacesList'>
+                <div className={this.classNames('PlacesList', this.state.isModalOpen && 'BlurSaturation')}>
                 {this.state.destination.places.map((place) => (
                     <div className='Place' key={place.place_id}>
 
@@ -39,9 +39,6 @@ class DestinationPage extends Component {
                 
                         <div className='InformationsPlace'>
                             <h3>{place.name}</h3>
-                            {/* <p>{place.vicinity}</p>
-                            <p>{place.rating}/5 ✨</p>
-                            <p>Nombre d'avis : {place.user_ratings_total}</p> */}
                             <p className='EditorialSummary'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquam eius autem nihil maxime, deleniti sapiente nulla ipsa.</p>
                             <a href={`${place.website}`} target="_blank" rel="noreferrer">Site web</a>
                             <button onClick={() => {this.openModalWithPlace(place.place_id)}}><img src={informations_icon} alt="Informations icon" className='InfosIcon'/></button>
@@ -49,8 +46,7 @@ class DestinationPage extends Component {
                     </div>
                 ))}
                 </div>
-                {/* <PlaceModal name="Nom du lieu" rating="4" isOpen="true" user_ratings_total="1256" formatted_address="3 rue Jules Ferry 69800 SAINT PRIEST" hours="Lundi 12:00 - 18:00"/> */}
-                {this.state.isModalOpen ? <PlaceModal name={this.state.activePlace.name} rating={this.state.activePlace.rating} isOpen={this.state.activePlace.opening_hours.open_now} user_ratings_total={this.state.activePlace.user_ratings_total} reviews={[this.state.activePlace.reviews]} address_components= {[this.state.activePlace.address_components]} weekday={[this.state.activePlace.opening_hours.weekday_text]}/> : null}
+                {this.state.isModalOpen ? <PlaceModal name={this.state.activePlace.name} rating={this.state.activePlace.rating} isOpen={this.state.activePlace.opening_hours.open_now} user_ratings_total={this.state.activePlace.user_ratings_total} reviews={[this.state.activePlace.reviews]} address_components= {[this.state.activePlace.address_components]} weekday={[this.state.activePlace.opening_hours.weekday_text]} closeBtn={this.closeModal}/> : null}
             </div>
         ) : null}
         </div>
@@ -70,7 +66,6 @@ class DestinationPage extends Component {
     //* Récupérer l'url de la page et la ville pour trouver l'index correspondant
     componentDidMount() {
         const destinations = this.props.destinations;
-        // console.log(destinations);
         const url = window.location.href;
         const lastSlash = url.lastIndexOf("/");
         const city = url.substring(lastSlash + 1);
@@ -79,13 +74,6 @@ class DestinationPage extends Component {
         this.setState({
           destination: destination,
         });
-        setTimeout(() => {
-            // console.log(this.state.destination.places);
-            for (let i = 0; i < this.state.destination.places.length; i++) {
-                // console.log(this.state.destination.places[i].photos.length);
-            }
-        }, 200);
-        //TODO: faire appel à la fonction getPhotos de Places Photos
     }
 
     openModalWithPlace(placeId) {
@@ -93,26 +81,18 @@ class DestinationPage extends Component {
         let place = this.state.destination.places.find(function(element){
             return element.place_id === placeId;
         });
-        console.log("Lieu clic sur infos "+place.address_components[0].long_name);
         this.setState({ activePlace: place});
-        setTimeout(() => {
-            console.log(this.state.activePlace);
-            console.log(this.state.activePlace.name);
-            console.log(this.state.activePlace.rating);
-            console.log(this.state.activePlace.opening_hours.open_now);
-            console.log(this.state.activePlace.user_ratings_total);
-            console.log(this.state.activePlace.reviews[0].text);
-            console.log(this.state.activePlace.address_components);
-            console.log(this.state.activePlace.opening_hours.weekday_text);
-
-        }, 1000);
-        //TODO: push place into activePlace and pass informations to PlaceModal props
     };
 
     closeModal = () => {
         this.setState({ isModalOpen: false });
         this.setState({ activePlace : null});
     };
+
+    //* On ajoute une classe à l'existante selon l'état isOpenModal
+    classNames(...args) {
+        return args.filter(Boolean).join(' ')
+    }
 }
 
 const mapStateToProps = (state) => {

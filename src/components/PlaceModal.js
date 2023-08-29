@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import "../style/PlaceModal.css";
+import cross_icon from "../assets/cross_grey_light_icon.png";
 
 class PlaceModal extends Component {
     render() {
         return (
             <div className='PlaceModal'>
                 {/* TODO: ajouter le Carousel */}
+                <button className='CloseModalBtn' onClick={this.props.closeBtn}><img src={cross_icon} alt="Icône pour fermer la modale" className='Cross'/></button>
                 <div>
                     <div className='MainTitle'>
                         <p>{this.props.name}</p>
@@ -56,7 +58,6 @@ class PlaceModal extends Component {
                         );
                     })}
                 </div>
-
             </div>
         );
     }

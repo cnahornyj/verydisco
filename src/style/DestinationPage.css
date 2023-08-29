@@ -29,13 +29,17 @@
     display: flex;
 }
 
+.BlurSaturation  {
+    filter: blur(1px) grayscale(1);
+}
+
 .Place {
     display: flex;
     background: ghostwhite;
     border: 1px solid lightgrey;
     border-radius: 15px;
     margin: 30px 15px 30px 0px;
-    width: 600px;
+    width: 475px;
     height: fit-content;
 }
 
