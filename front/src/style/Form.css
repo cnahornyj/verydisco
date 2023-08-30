@@ -1,0 +1,138 @@
+.Form {
+    background: #8cb6b2;
+    padding-top: 100px;
+}
+
+form {
+    color: #5F5F5F;
+    background: white;
+    width: 400px;
+    padding: 30px;
+    margin: auto;
+    border-radius: 30px;
+}
+
+form > img {
+    width: 200px;
+    position: absolute;
+    left: 50%;
+    bottom: 85.3%;
+    transform: translate(-50%, 50%);
+}
+
+select {
+    width: 100%;
+    height: 30px;
+    border: 1px solid #5F5F5F;
+    color: #5F5F5F;
+    border: none;
+    border-bottom: 1px solid;
+}
+
+.TypesPlaces {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.TypePlace {
+    width: 50px;
+    border: 1px solid;
+    padding: 15px 30px;
+    margin: 15px 0;
+    background: #8cb6b22b;
+}
+
+.TypePlace > img { 
+    width: 50px;
+}
+
+.TypePlace > p {
+    margin: 0;
+    text-align: center;
+    font-weight: 400;
+}
+
+.TypePlace:hover {
+    transform: scale(1.1); 
+    transition-duration: 500ms;
+    background: #ffffffa8;
+    cursor: pointer;
+}
+
+/* button {
+    font-size: 14px;
+    background: #06675E;
+    color: whitesmoke;
+    padding: 15px 30px;
+    border: 2px solid #06675E;
+    border-radius: 30px;
+    font-weight: bold;
+} */
+
+.Suggestions {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    position: fixed;
+    top: 28%;
+    left: 40%;
+    margin-top: -100px;
+    margin-left: -250px;
+}
+
+.SelectedPlaces {
+    width: 300px;
+    background: #f2f2f2;
+    border: 1px solid #b1adad;
+    border-bottom-left-radius: 30px;
+    border-top-left-radius: 30px;
+}
+
+.SelectedPlaces > p {
+    border-bottom: 1px solid lightgrey;
+    font-size: 16px;
+    padding: 10px 10px;
+    margin: 1px;
+}
+
+.SelectedPlaces > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #06675e;
+    color: white;
+    padding: 0 20px;
+    margin-top: 0px;
+    border-top-left-radius: 30px;
+    font-weight: 500;
+}
+
+.SelectedPlaces > div > p {
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.SelectedPlaces > div > .sendFinalList {
+    background: white;
+    color: #06675e;
+    padding: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 12px;
+    width: 100px;
+}
+
+.SelectedPlaces > div > .sendFinalList:hover {
+    font-weight: bold;
+}
+
+.linkWebsite {
+    color: #06675e !important;
+    text-decoration: underline;
+}
+
+.ImgMarker {
+    border-radius: 10px;
+}

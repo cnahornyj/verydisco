@@ -1,0 +1,24 @@
+.Block {
+    width: 50%;
+    border: 1px solid grey;
+}
+
+.InformationsBlock {
+    width: 50%;
+    border: 1px solid grey;
+}
+
+.EnteteBloc {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    background: yellowgreen;
+}
+
+.PlaceCard {
+    display: flex;
+    margin: 30px;
+    border: 1px solid grey;
+}
+
