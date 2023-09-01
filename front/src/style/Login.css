@@ -1,0 +1,42 @@
+.LogAndSign {
+    display: flex;
+    justify-content: center;
+}
+
+.Signup, .Login {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    padding: 75px 50px;
+    background: #8cb6b2;
+    color: white;
+    height: 200px;
+    justify-content: center;
+    border: 1px solid #779c98;
+    border-radius: 15px;
+    font-size: 17px;
+}
+
+.Signup > label, .Login > label {
+    margin-bottom: 5px;
+}
+
+.Signup > input, .Login > input {
+    border: none;
+    border-bottom: 1px solid grey;
+    border-radius: 15px;
+    background: #E8F0FE;
+    color: #4c4c4c;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
+.Signup > button, .Login > button {
+    cursor: pointer;
+    background: #06675e;
+    color: white;
+    padding: 5px 0px;
+    border: 1px solid grey;
+    border-radius: 25px;
+    font-weight: bold;
+}
