@@ -11,6 +11,7 @@ class Navbar extends Component {
                     <ul>
                         <li><NavLink exact to="/">Accueil</NavLink></li>
                         <li><NavLink exact to="/apropos">A propos</NavLink></li>
+                        <li><NavLink exact to="/login">Se connecter</NavLink></li>
                     </ul>
                 </nav>
             </div>

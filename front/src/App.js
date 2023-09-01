@@ -1,4 +1,5 @@
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './views/Login';
 import Home from './views/Home';
 import Form from './views/Form';
 import DifferentForm from './views/DifferentForm';
@@ -17,6 +18,7 @@ class App extends Component {
           <Route path="/form" element={<Form/>}/>
           <Route path="/differentform" element={<DifferentForm/>}/>
           <Route path="/destination/:city" element={<DestinationPage/>}/>
+          <Route path="/login" element={<Login/>}/>
           <Route component={Error} />
         </Routes>
       </Router>
