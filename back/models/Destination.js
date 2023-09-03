@@ -1,13 +1,24 @@
 const mongoose = require('mongoose');
 
 const destinationSchema = mongoose.Schema({
-    name: { type: String, required: true },
-    country: { type: String, required: true},
+
+    country: { type: String, required: true },
     city: { type: String },
-    description: { type: String, required: true},
-    address: { type: String, required: true},
-    pricelevel: { type: Number },
-    placeid: { type: String, required: true}
+    places: [
+        {
+            place_id: { type: String, required: true },
+            name: { type: String, required: true },
+            description: { type: String },
+            address: { type: String, required: true },
+            opening_hours: { type: [String] },
+            //photos: { type: ArrayBuffer },
+            website: { type: String },
+            rating: { type: Number },
+            user_ratings_total: { type: Number },
+            reviews: { type: [Object] },
+            types: { type: [String] },
+        }
+    ]
 })
 
 module.exports = mongoose.model('Destination', destinationSchema);
