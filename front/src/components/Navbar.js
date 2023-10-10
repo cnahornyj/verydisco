@@ -9,7 +9,7 @@ class Navbar extends Component {
                 <h1>Verydisco</h1>
                 <nav>
                     <ul>
-                        <li><NavLink exact to="/">Accueil</NavLink></li>
+                        <li><NavLink exact to="/home">Accueil</NavLink></li>
                         <li><NavLink exact to="/apropos">A propos</NavLink></li>
                         <li><NavLink exact to="/login">Se connecter</NavLink></li>
                     </ul>
