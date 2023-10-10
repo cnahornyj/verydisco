@@ -1,6 +1,6 @@
 import React, { Component } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
-import aquarium from "../assets/aquarium_dark_icon.png";
 import "../style/Login.css";
 
 class Login extends Component {
@@ -11,6 +11,7 @@ class Login extends Component {
       name: null,
       email: null,
       password: null,
+      logged: null
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -70,6 +71,7 @@ class Login extends Component {
           />
           <button type="submit">Connexion</button>
         </form>
+        {this.state.logged && <Navigate to={'/home'}/>}
       </div>
     );
   }
@@ -139,6 +141,9 @@ class Login extends Component {
           localStorage.setItem("token", JSON.stringify(response.data.token));
           this.setState({ email: null });
           this.setState({ password: null });
+          setTimeout(() => {
+            this.setState({logged: true});
+          }, 1000);
         });
     }
   }
