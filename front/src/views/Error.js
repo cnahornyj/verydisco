@@ -1,11 +1,10 @@
-import React, { Component } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-class Error extends Component {
-  render() {
-    return (
-      <div className="errorPage">
+const Error = () => {
+  return (
+    <div className="errorPage">
         <Navbar />
         <section className="errorSection">
           <p className="errorCode">404</p>
@@ -13,8 +12,7 @@ class Error extends Component {
           <Link to={"/form"} className="redirection">Retourner sur la page d'accueil</Link>
         </section>
       </div>
-    );
-  }
+  );
 }
 
 export default Error;
