@@ -16,13 +16,13 @@ class Login extends Component {
       this.handleChangeEmail = this.handleChangeEmail.bind(this);
       this.handleChangePassword = this.handleChangePassword.bind(this);
       this.signUp = this.signUp.bind(this);
+      this.logIn = this.logIn.bind(this);
     }
 
     render() {
         return (
             <div className='LogAndSign'>
-                <div className='Signup'>
-                    <form onSubmit={this.signUp.bind(this)}>
+                <form onSubmit={this.signUp.bind(this)} className='Signup'>
                         <label>Nom</label>
                         <input type="text" name="name" placeholder='John' onBlur={this.handleChangeName}/>
                         <label>Email</label>
@@ -30,26 +30,25 @@ class Login extends Component {
                         <label>Mot de passe</label>
                         <input type="password" name="password" onBlur={this.handleChangePassword}/>
                         <button type="submit">S'enregistrer</button>
-                    </form>
-                </div>
-                <div className="Login">
+                </form>
+                <form onSubmit={this.logIn.bind(this)} className="Login">
                     <label>Email</label>
-                    <input type="email" name="email" placeholder='john@hotmail.com'/>
+                    <input type="email" name="email" placeholder='john@hotmail.com' onBlur={this.handleChangeEmail}/>
                     <label>Mot de passe</label>
-                    <input type="password" name="password"/>
+                    <input type="password" name="password" onBlur={this.handleChangePassword}/>
                     <button type="submit">Connexion</button>
-                </div>
+                </form>
             </div>
         );
     }
 
     handleChangeName(event) {
-        this.setState({name: null});
+        this.setState({name: event.target.value});
     }
 
     handleChangeEmail(event) {
         const emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/gm;
-        console.log(event.target.value);
+        // console.log(event.target.value);
         if (emailRegex.test(event.target.value)){
             this.setState({email: event.target.value});
         } else {
@@ -71,6 +70,7 @@ class Login extends Component {
         var name = this.state.name;
         var email = this.state.email;
         var password = this.state.password;
+        console.log(name,email,password);
         if(name && email && password){
             axios.post("http://localhost:3000/api/auth/signup", {
             name: name,    
@@ -80,6 +80,25 @@ class Login extends Component {
             .then((response) => {
             console.log(response);
             this.setState({name: null});
+            this.setState({email: null});
+            this.setState({password: null});
+            });
+        }
+    }
+
+    logIn(event){
+        event.preventDefault();
+        var email = this.state.email;
+        var password = this.state.password;
+        // console.log(email,password);
+        if(email && password){
+            axios.post("http://localhost:3000/api/auth/login", { 
+            email: email,
+            password: password
+            })
+            .then((response) => {
+            console.log(response);
+            localStorage.setItem('token', JSON.stringify(response.data.token));
             this.setState({email: null});
             this.setState({password: null});
             });
