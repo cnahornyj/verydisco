@@ -3,6 +3,10 @@
     justify-content: center;
 }
 
+.Signup {
+    margin-right: 50px;
+}
+
 .Signup, .Login {
     display: flex;
     flex-direction: column;
@@ -10,6 +14,7 @@
     padding: 75px 50px;
     background: #8cb6b2;
     color: white;
+    width: 250px;
     height: 200px;
     justify-content: center;
     border: 1px solid #779c98;
@@ -39,4 +44,7 @@
     border: 1px solid grey;
     border-radius: 25px;
     font-weight: bold;
+    margin: auto;
+    margin-top: 15px;
+    width: 125px;
 }

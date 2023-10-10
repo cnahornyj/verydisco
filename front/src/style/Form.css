@@ -3,7 +3,7 @@
     padding-top: 100px;
 }
 
-form {
+/* form {
     color: #5F5F5F;
     background: white;
     width: 400px;
@@ -18,7 +18,7 @@ form > img {
     left: 50%;
     bottom: 85.3%;
     transform: translate(-50%, 50%);
-}
+} */
 
 select {
     width: 100%;
