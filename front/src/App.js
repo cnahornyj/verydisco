@@ -1,29 +1,44 @@
-import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './views/Login';
-import Home from './views/Home';
-import Form from './views/Form';
-import DifferentForm from './views/DifferentForm';
-import DestinationPage from './views/DestinationPage';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import React, { Component } from 'react';
+import PrivateRoute from "./auth/PrivateRoute";
+import Login from "./views/Login";
+import Home from "./views/Home";
+import DifferentForm from "./views/DifferentForm";
+import DestinationPage from "./views/DestinationPage";
 
-class App extends Component {
+import "./App.css";
 
-  render() {
-    return (
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/form" element={<Form/>}/>
-          <Route path="/differentform" element={<DifferentForm/>}/>
-          <Route path="/destination/:city" element={<DestinationPage/>}/>
-          <Route path="/login" element={<Login/>}/>
-          <Route component={Error} />
-        </Routes>
-      </Router>
-    );
-  }
+export default function App() {
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login/>} />
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/differentform"
+          element={
+            <PrivateRoute>
+              <DifferentForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/destination/:city"
+          element={
+            <PrivateRoute>
+              <DestinationPage />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App;
