@@ -1,29 +1,45 @@
 const express = require('express');
-const auth = require('../middleware/auth');
-//TODO: multer devra être utilisé sur toutes les routes à chaque fois que l'utilisateur essayera d'envoyer des photos
-const multer = require('../middleware/multer-config');
 const router = express.Router();
-
+const multer = require('../middleware/multer-config');
+const auth = require('../middleware/auth');
 const destinationCtrl = require('../controllers/destination');
 
-router.get('/', function(req, res){
-  destinationCtrl.getAllDestinations
+router.get('/', auth, function(req, res){
+  destinationCtrl.getAllDestinations(req, res);
 });
 
-router.get('/:id', function(req, res){
-  destinationCtrl.getDestination
+router.get('/:id', auth, function(req, res){
+  destinationCtrl.getDestination(req, res);
 });
 
-router.post('/', function(req, res){
-  destinationCtrl.createDestination
+router.post('/', auth, function(req, res){
+  destinationCtrl.createDestination(req, res);
 });
 
-router.put('/:id', function(req, res){
-  destinationCtrl.updateDestination
+router.post('/:destinationId/add-places', auth, function(req, res){
+  destinationCtrl.addPlacesToExistingDestination(req, res);
 });
 
-router.delete('/:id', function(req, res){
-  destinationCtrl.deleteDestination
+router.put('/:id', auth, function(req, res){
+  destinationCtrl.updateDestination(req, res);
 });
+
+router.delete('/:id', auth, function(req, res){
+  destinationCtrl.deleteDestination(req, res);
+});
+
+router.post('/:id/add-places', auth, function(req, res){
+  destinationCtrl.addPlacesToDestination(req, res);
+});
+
+router.put('/:id/update-place', auth, function(req, res){
+  destinationCtrl.updatePlaceInDestination(req, res);
+});
+
+router.delete('/:id/delete-place', auth, function(req, res){
+  destinationCtrl.deletePlaceFromDestination(req, res);
+});
+
+
 
 module.exports = router;

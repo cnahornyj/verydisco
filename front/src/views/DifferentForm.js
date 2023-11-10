@@ -1,8 +1,8 @@
 import React, { Component } from "react";
+import { Navigate } from "react-router-dom";
 import "../style/DifferentForm.css";
 import Navbar from "../components/Navbar";
 import { connect } from "react-redux";
-import { Navigate } from "react-router-dom";
 
 class DifferentForm extends Component {
   constructor(props) {
@@ -42,7 +42,7 @@ class DifferentForm extends Component {
               placeholder="Entrez un lieu, une adresse.."
             />
           </div>
-          {this.state.shouldRedirect ? <Navigate replace to="/" /> : null}
+          {this.state.shouldRedirect ? <Navigate replace to="/home" /> : null}
         </div>
       </div>
     );
