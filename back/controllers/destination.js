@@ -72,31 +72,54 @@ exports.createDestination = async (req, res) => {
   }
 };
 
-//TODO: créer un controller qui permet d'ajouter un/des lieux à une destination déjà existante A REVOIR
-exports.addPlacesToExistingDestination = async (req, res) => {
+//* Add one or many places to an existing destination (without remove existing one)
+//! Le controller fonctionne lorsque les deux schémas sont distincts
+exports.addPlacesToDestination = async (req, res) => {
   try {
-    const { destinationId } = req.params; // Assuming destinationId is passed in the route parameters
-    const { places } = req.body;
+    const { destinationId, places } = req.body;
 
-    // Find the destination by ID
+    if (!Array.isArray(places)) {
+      return res.status(400).json({ error: 'Invalid places data. Expected an array.' });
+    }
+
     const destination = await Destination.findById(destinationId);
 
     if (!destination) {
       return res.status(404).json({ error: 'Destination not found' });
     }
 
-    // Create places and associate them with the destination
-    const createdPlaces = await Place.create(places);
+    const newPlaces = await Place.create(places);
 
-    // Append new places to existing places in the destination
-    destination.places.push(...createdPlaces.map(place => place._id));
-
-    // Save the updated destination with new places
+    destination.places.push(...newPlaces);
     await destination.save();
 
-    res.status(201).json({ message: 'Places added to destination', places: createdPlaces });
+    res.status(201).json({ message: 'Places added to destination', destination });
   } catch (error) {
     console.error('Add Places to Destination Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+exports.updatePlaceInDestination = async (req, res) => {
+  try {
+    const { destinationId, placeId } = req.params;
+    const updateData = req.body;
+
+    // Find the destination
+    const destination = await Destination.findById(destinationId);
+    console.log(destination.places);
+
+    // Find and update the place in the destination
+    // const placeIndex = destination.places.findIndex(place => place.equals(placeId));
+    // if (placeIndex !== -1) {
+    //   destination.places[placeIndex].set(updateData);
+    //   await destination.save();
+    //   res.status(200).json(destination);
+    // } else {
+    //   res.status(404).json({ error: 'Place not found in the destination' });
+    // }
+  } catch (error) {
+    console.error('Update Place in Destination Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
