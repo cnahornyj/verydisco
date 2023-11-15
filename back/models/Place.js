@@ -3,15 +3,14 @@ const mongoose = require('mongoose');
 const placeSchema = new mongoose.Schema({
   destinationId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Destination',
-    required: true,
+    ref: 'Destination'
   },
-  name: { type: String, required: true },
+  name: { type: String },
   description: String,
   totalUserRating: Number,
   rating: Number,
   openingHours: String,
-  address: { type: String, required: true },
+  address: { type: String },
   photo: String,
   website: String,
   types: [String],

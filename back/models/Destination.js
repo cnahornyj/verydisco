@@ -5,6 +5,7 @@ const destinationSchema = new mongoose.Schema({
   country: { type: String, required: true },
   city: String,
   places: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Place' }], // Using references
+  //TODO: Adding place Schema directly here rather than using references
 });
 
 const Destination = mongoose.model('Destination', destinationSchema);
