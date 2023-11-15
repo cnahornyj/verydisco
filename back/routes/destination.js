@@ -17,29 +17,7 @@ router.post('/', auth, function(req, res){
 });
 
 router.post('/:destinationId/add-places', auth, function(req, res){
-  destinationCtrl.addPlacesToExistingDestination(req, res);
-});
-
-router.put('/:id', auth, function(req, res){
-  destinationCtrl.updateDestination(req, res);
-});
-
-router.delete('/:id', auth, function(req, res){
-  destinationCtrl.deleteDestination(req, res);
-});
-
-router.post('/:id/add-places', auth, function(req, res){
   destinationCtrl.addPlacesToDestination(req, res);
 });
-
-router.put('/:id/update-place', auth, function(req, res){
-  destinationCtrl.updatePlaceInDestination(req, res);
-});
-
-router.delete('/:id/delete-place', auth, function(req, res){
-  destinationCtrl.deletePlaceFromDestination(req, res);
-});
-
-
 
 module.exports = router;
