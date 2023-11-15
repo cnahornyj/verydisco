@@ -20,4 +20,12 @@ router.post('/:destinationId/add-places', auth, function(req, res){
   destinationCtrl.addPlacesToDestination(req, res);
 });
 
+router.put('/:destinationId/update-place/:placeId', auth, function(req, res){
+  destinationCtrl.updatePlaceInDestination(req, res);
+});
+
+router.delete('/:destinationId/delete-place/:placeId', auth, function(req, res){
+  destinationCtrl.deletePlaceFromDestination(req, res);
+});
+
 module.exports = router;

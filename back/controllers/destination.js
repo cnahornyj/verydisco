@@ -1,5 +1,4 @@
 const Destination = require("../models/Destination");
-const Place = require("../models/Place");
 
 //* Retrieves all destinations of a user
 exports.getAllDestinations = async (req, res, next) => {
@@ -45,81 +44,119 @@ exports.getDestination = async (req, res, next) => {
   }
 };
 
-//* Creates a destination with ou without associated places
 exports.createDestination = async (req, res) => {
   try {
-    const { userId } = req.auth; // Assuming userId is set by authentication middleware
-    const { country, city, places } = req.body;
-
-    // Create a new destination with the provided data
-    const newDestination = await Destination.create({
-      userId,
-      country,
-      city,
-    });
-
-    // If places are provided, associate them with the new destination
-    if (places && places.length > 0) {
-      const placeIds = await Place.insertMany(places.map(place => ({ destinationId: newDestination._id, ...place })));
-      newDestination.places = placeIds.map(place => place._id);
-      await newDestination.save();
-    }
-
+    const { userId } = req.auth;
+    const { country, city } = req.body;
+    const newDestination = await Destination.create({ userId, country, city });
     res.status(201).json(newDestination);
   } catch (error) {
-    console.error('Create Destination Error:', error.message);
+    console.error('Create Destination Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-//* Add one or many places to an existing destination (without remove existing one)
-//! Le controller fonctionne lorsque les deux schémas sont distincts
 exports.addPlacesToDestination = async (req, res) => {
   try {
-    const { destinationId, places } = req.body;
+    const { destinationId } = req.params;
+    const { places } = req.body;
 
-    if (!Array.isArray(places)) {
-      return res.status(400).json({ error: 'Invalid places data. Expected an array.' });
-    }
-
+    // Find the destination by ID
     const destination = await Destination.findById(destinationId);
 
     if (!destination) {
       return res.status(404).json({ error: 'Destination not found' });
     }
 
-    const newPlaces = await Place.create(places);
-
-    destination.places.push(...newPlaces);
+    // Add places to the destination
+    destination.places.push(...places);
     await destination.save();
 
-    res.status(201).json({ message: 'Places added to destination', destination });
+    res.status(200).json(destination);
   } catch (error) {
     console.error('Add Places to Destination Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
+//* works without passing the userId directly in the request but with the token
 exports.updatePlaceInDestination = async (req, res) => {
   try {
     const { destinationId, placeId } = req.params;
-    const updateData = req.body;
 
-    // Find the destination
+    // Find the destination by ID
     const destination = await Destination.findById(destinationId);
-    console.log(destination.places);
 
-    // Find and update the place in the destination
-    // const placeIndex = destination.places.findIndex(place => place.equals(placeId));
-    // if (placeIndex !== -1) {
-    //   destination.places[placeIndex].set(updateData);
-    //   await destination.save();
-    //   res.status(200).json(destination);
-    // } else {
-    //   res.status(404).json({ error: 'Place not found in the destination' });
-    // }
+    if (!destination) {
+      return res.status(404).json({ error: 'Destination not found' });
+    }
+
+    // Find the place within the destination's places array
+    const placeToUpdate = destination.places.id(placeId);
+
+    if (!placeToUpdate) {
+      return res.status(404).json({ error: 'Place not found in the destination' });
+    }
+
+    // Update the place with new data from the request body
+    const { userId, name, description, totalUserRating, rating, openingHours, address, photo, website, types } = req.body;
+
+    // Check and update only the fields that are present in the request body
+    if (name !== undefined) placeToUpdate.name = name;
+    if (description !== undefined) placeToUpdate.description = description;
+    if (totalUserRating !== undefined) placeToUpdate.totalUserRating = totalUserRating;
+    if (rating !== undefined) placeToUpdate.rating = rating;
+    if (openingHours !== undefined) placeToUpdate.openingHours = openingHours;
+    if (address !== undefined) placeToUpdate.address = address;
+    if (photo !== undefined) placeToUpdate.photo = photo;
+    if (website !== undefined) placeToUpdate.website = website;
+    if (types !== undefined) placeToUpdate.types = types;
+
+    // Save the updated destination
+    await destination.save();
+
+    res.status(200).json(destination);
   } catch (error) {
     console.error('Update Place in Destination Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+//* works without passing the userId directly in the request but with the token
+exports.deletePlaceFromDestination = async (req, res) => {
+  try {
+    const { destinationId, placeId } = req.params;
+
+    // Find the destination by ID
+    const destination = await Destination.findById(destinationId);
+
+    if (!destination) {
+      return res.status(404).json({ error: 'Destination not found' });
+    }
+
+    // Remove the place from the array using pull
+    destination.places.pull({ _id: placeId });
+
+    // Save the updated destination
+    await destination.save();
+
+    res.status(200).json(destination);
+  } catch (error) {
+    console.error('Delete Place from Destination Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
