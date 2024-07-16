@@ -83,6 +83,9 @@ exports.addPlacesToDestination = async (req, res) => {
 exports.updatePlaceInDestination = async (req, res) => {
   try {
     const { destinationId, placeId } = req.params;
+    // console.log(`Destination ID: ${destinationId}`);
+    // console.log(`Place ID: ${placeId}`);
+    // console.log('Request Body:', req.body);
 
     // Find the destination by ID
     const destination = await Destination.findById(destinationId);
