@@ -40,7 +40,7 @@
     border: 1px solid lightgrey;
     border-radius: 15px;
     margin: 30px 15px 30px 0px;
-    width: 450px;
+    width: 400px;
     height: fit-content;
 }
 
@@ -63,8 +63,8 @@
 
 .InformationsPlace > button > img {
     position: relative;
-    top: -110px;
-    left: 145px;
+    top: 70px;
+    left: 70px;
 }
 
 .InformationsPlace > a {

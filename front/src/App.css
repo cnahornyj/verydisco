@@ -30,8 +30,8 @@ a {
     font-size: 30px;
     margin: 0;
     position: fixed;
-    right: -15px;
-    bottom: -5px;
+    right: 0px;
+    bottom: 0px;
     background: none;
     border: none;
 }
