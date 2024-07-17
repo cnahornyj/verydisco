@@ -10,13 +10,14 @@ class Home extends Component {
         return (
             <div>
                 <Navbar/>
-                {this.props.destinations.length > 0 ? (<DestinationsList/>) : (<EmptyList/>)}
+                {this.props.destinations.destinations.length > 0 ? (<DestinationsList/>) : (<EmptyList/>)}
             </div>
         );
     }
 
     componentDidMount(){
-        console.log(this.props.destinations);
+        //console.log(this.props.destinations.destinations.length);
+        console.log(this.props.destinations.destinations);
     }
 }
 
