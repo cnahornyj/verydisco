@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import axios from "axios";
+import { connect } from "react-redux";
+import { fetchDestinations } from "../actions/destinationActions";
 import "../style/Login.css";
 
 class Login extends Component {
@@ -11,7 +13,7 @@ class Login extends Component {
       name: null,
       email: null,
       password: null,
-      logged: null
+      logged: null,
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -21,10 +23,79 @@ class Login extends Component {
     this.logIn = this.logIn.bind(this);
   }
 
+  handleChangeName(event) {
+    this.setState({ name: event.target.value });
+  }
+
+  handleChangeEmail(event) {
+    const emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/gm;
+    if (emailRegex.test(event.target.value)) {
+      this.setState({ email: event.target.value });
+    } else {
+      alert("Le format de votre email est invalide");
+    }
+  }
+
+  handleChangePassword(event) {
+    const passwordRegex = new RegExp(
+      "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
+    );
+    if (passwordRegex.test(event.target.value)) {
+      this.setState({ password: event.target.value });
+    } else {
+      alert(
+        "Votre mot de passe doit comporter un minimum de 8 caractères dont au moins une minuscule, une majuscule, un chiffre et un caractère spécial"
+      );
+    }
+  }
+
+  signUp(event) {
+    event.preventDefault();
+    var name = this.state.name;
+    var email = this.state.email;
+    var password = this.state.password;
+    if (name && email && password) {
+      axios
+        .post("http://localhost:3000/api/auth/signup", {
+          name: name,
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+          this.setState({ name: null });
+          this.setState({ email: null });
+          this.setState({ password: null });
+        });
+    }
+  }
+
+  logIn(event) {
+    event.preventDefault();
+    var email = this.state.email;
+    var password = this.state.password;
+    if (email && password) {
+      axios
+        .post("http://localhost:3000/api/auth/login", {
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+          localStorage.setItem("token", JSON.stringify(response.data.token));
+          localStorage.setItem("userId", response.data.userId);
+          this.setState({ email: null });
+          this.setState({ password: null });
+          this.props.fetchDestinations();
+          setTimeout(() => {
+            this.setState({ logged: true });
+          }, 1000);
+        });
+    }
+  }
+
   render() {
     return (
       <div className="LogAndSign">
-        <form onSubmit={this.signUp.bind(this)} className="Signup">
+        <form onSubmit={this.signUp} className="Signup">
           <div>
             <h2>Je crée mon compte</h2>
             <hr />
@@ -51,7 +122,7 @@ class Login extends Component {
           />
           <button type="submit">S'enregistrer</button>
         </form>
-        <form onSubmit={this.logIn.bind(this)} className="Login">
+        <form onSubmit={this.logIn} className="Login">
           <div>
             <h2>Je me connecte</h2>
             <hr />
@@ -71,82 +142,14 @@ class Login extends Component {
           />
           <button type="submit">Connexion</button>
         </form>
-        {this.state.logged && <Navigate to={'/home'}/>}
+        {this.state.logged && <Navigate to="/home" />}
       </div>
     );
   }
-
-  handleChangeName(event) {
-    this.setState({ name: event.target.value });
-  }
-
-  handleChangeEmail(event) {
-    const emailRegex = /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/gm;
-    // console.log(event.target.value);
-    if (emailRegex.test(event.target.value)) {
-      this.setState({ email: event.target.value });
-    } else {
-      alert("Le format de votre email est invalide");
-    }
-  }
-
-  handleChangePassword(event) {
-    const passwordRegex = new RegExp(
-      "(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})"
-    );
-    if (passwordRegex.test(event.target.value)) {
-      this.setState({ password: event.target.value });
-    } else {
-      alert(
-        "Votre mot de passe doit comporter un minimum de 8 caractères dont au moins une minuscule, une majuscule, un chiffre et un caractère spécial"
-      );
-    }
-  }
-
-  signUp(event) {
-    event.preventDefault();
-    var name = this.state.name;
-    var email = this.state.email;
-    var password = this.state.password;
-    console.log(name, email, password);
-    if (name && email && password) {
-      axios
-        .post("http://localhost:3000/api/auth/signup", {
-          name: name,
-          email: email,
-          password: password,
-        })
-        .then((response) => {
-          console.log(response);
-          this.setState({ name: null });
-          this.setState({ email: null });
-          this.setState({ password: null });
-        });
-    }
-  }
-
-  logIn(event) {
-    event.preventDefault();
-    var email = this.state.email;
-    var password = this.state.password;
-    // console.log(email,password);
-    if (email && password) {
-      axios
-        .post("http://localhost:3000/api/auth/login", {
-          email: email,
-          password: password,
-        })
-        .then((response) => {
-          console.log(response);
-          localStorage.setItem("token", JSON.stringify(response.data.token));
-          this.setState({ email: null });
-          this.setState({ password: null });
-          setTimeout(() => {
-            this.setState({logged: true});
-          }, 1000);
-        });
-    }
-  }
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  fetchDestinations: () => dispatch(fetchDestinations()),
+});
+
+export default connect(null, mapDispatchToProps)(Login);
