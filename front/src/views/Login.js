@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 import { connect } from "react-redux";
-import { fetchDestinations } from "../actions/destinationActions";
+import { loginSuccess, loginFailure } from "../actions/authActions";
 import "../style/Login.css";
 
 class Login extends Component {
@@ -10,10 +10,10 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      name: null,
-      email: null,
-      password: null,
-      logged: null,
+      name: '',
+      email: '',
+      password: '',
+      logged: false,
     };
 
     this.handleChangeName = this.handleChangeName.bind(this);
@@ -51,43 +51,34 @@ class Login extends Component {
 
   signUp(event) {
     event.preventDefault();
-    var name = this.state.name;
-    var email = this.state.email;
-    var password = this.state.password;
+    const { name, email, password } = this.state;
     if (name && email && password) {
       axios
-        .post("http://localhost:3000/api/auth/signup", {
-          name: name,
-          email: email,
-          password: password,
-        })
+        .post("http://localhost:3000/api/auth/signup", { name, email, password })
         .then((response) => {
-          this.setState({ name: null });
-          this.setState({ email: null });
-          this.setState({ password: null });
+          this.setState({ name: '', email: '', password: '' });
         });
     }
   }
 
   logIn(event) {
     event.preventDefault();
-    var email = this.state.email;
-    var password = this.state.password;
+    const { email, password } = this.state;
     if (email && password) {
       axios
-        .post("http://localhost:3000/api/auth/login", {
-          email: email,
-          password: password,
-        })
+        .post("http://localhost:3000/api/auth/login", { email, password })
         .then((response) => {
-          localStorage.setItem("token", JSON.stringify(response.data.token));
-          localStorage.setItem("userId", response.data.userId);
-          this.setState({ email: null });
-          this.setState({ password: null });
-          this.props.fetchDestinations();
+          const { token, userId } = response.data;
+          localStorage.setItem("token", JSON.stringify(token));
+          localStorage.setItem("userId", userId);
+          this.setState({ email: '', password: '' });
+          this.props.loginSuccess(token, userId);
           setTimeout(() => {
             this.setState({ logged: true });
           }, 1000);
+        })
+        .catch(error => {
+          this.props.loginFailure(error.message);
         });
     }
   }
@@ -105,20 +96,20 @@ class Login extends Component {
             type="text"
             name="name"
             placeholder="John"
-            onBlur={this.handleChangeName}
+            onChange={this.handleChangeName}
           />
           <label>Email</label>
           <input
             type="email"
             name="email"
             placeholder="john@hotmail.com"
-            onBlur={this.handleChangeEmail}
+            onChange={this.handleChangeEmail}
           />
           <label>Mot de passe</label>
           <input
             type="password"
             name="password"
-            onBlur={this.handleChangePassword}
+            onChange={this.handleChangePassword}
           />
           <button type="submit">S'enregistrer</button>
         </form>
@@ -132,13 +123,13 @@ class Login extends Component {
             type="email"
             name="email"
             placeholder="john@hotmail.com"
-            onBlur={this.handleChangeEmail}
+            onChange={this.handleChangeEmail}
           />
           <label>Mot de passe</label>
           <input
             type="password"
             name="password"
-            onBlur={this.handleChangePassword}
+            onChange={this.handleChangePassword}
           />
           <button type="submit">Connexion</button>
         </form>
@@ -149,7 +140,8 @@ class Login extends Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchDestinations: () => dispatch(fetchDestinations()),
+  loginSuccess: (token, userId) => dispatch(loginSuccess(token, userId)),
+  loginFailure: (error) => dispatch(loginFailure(error)),
 });
 
 export default connect(null, mapDispatchToProps)(Login);
