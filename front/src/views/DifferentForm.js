@@ -1,8 +1,11 @@
+// src/views/DifferentForm.js
+
 import React, { Component } from "react";
 import { Navigate } from "react-router-dom";
 import "../style/DifferentForm.css";
 import Navbar from "../components/Navbar";
 import { connect } from "react-redux";
+import axios from 'axios';
 
 class DifferentForm extends Component {
   constructor(props) {
@@ -12,15 +15,17 @@ class DifferentForm extends Component {
       city: null,
       places: [],
       shouldRedirect: null,
+      destinationId: null,
     };
 
-    this.saveList = this.saveList.bind(this);
+    // this.saveList = this.saveList.bind(this);
+    this.addPlaceToDestination = this.addPlaceToDestination.bind(this);
   }
 
   render() {
     return (
       <div>
-        <Navbar/>
+        <Navbar />
         <div className="DifferentForm">
           <div className="SelectionsList">
             <div className="Title">
@@ -37,7 +42,7 @@ class DifferentForm extends Component {
             <div id="map"></div>
             <input
               id="pac-input"
-              class="controls"
+              className="controls"
               type="text"
               placeholder="Entrez un lieu, une adresse.."
             />
@@ -54,7 +59,6 @@ class DifferentForm extends Component {
       zoom: 13,
     });
     const input = document.getElementById("pac-input");
-    // Specify just the place data fields that you need.
     const autocomplete = new window.google.maps.places.Autocomplete(input, {
       fields: [
         "place_id",
@@ -79,15 +83,12 @@ class DifferentForm extends Component {
     map.controls[window.google.maps.ControlPosition.TOP_LEFT].push(input);
 
     const infowindow = new window.google.maps.InfoWindow();
-    const infowindowContent = document.getElementById("infowindow-content");
-
-    infowindow.setContent(infowindowContent);
-
     const marker = new window.google.maps.Marker({ map: map });
 
     marker.addListener("click", () => {
       infowindow.open(map, marker);
     });
+
     autocomplete.addListener("place_changed", () => {
       infowindow.close();
 
@@ -104,41 +105,34 @@ class DifferentForm extends Component {
         map.setZoom(17);
       }
 
-      //* Set the position of the marker using the place ID and location.
       marker.setPlace({
         placeId: place.place_id,
         location: place.geometry.location,
       });
       marker.setVisible(true);
-      console.log(place);
 
       let content = document.createElement("div");
 
-      if (place.photos) {
-        let placeImg = document.createElement("img");
-        placeImg.src = place.photos[0].getUrl({
-          maxWidth: 230,
-          maxHeight: 135,
-        });
-        placeImg.classList.add("ImgMarker");
-        content.appendChild(placeImg);
+      let countryIndex = place.address_components.length - 2;
+      let country = place.address_components[countryIndex].long_name;
 
-        //* On stocke l'URL des images du lieu
+      if (place.photos) {
         for (let i = 0; i < place.photos.length; i++) {
-          let url = place.photos[i].getUrl({ maxWidth: 460, maxHeight: 270 }).replaceAll('"','');
+          let url = place.photos[i].getUrl({ maxWidth: 460, maxHeight: 270 }).replaceAll('"', '');
           Object.assign(place.photos[i], { imgUrl: url });
-          console.log(place);
         }
       }
 
       let placeName = document.createElement("h2");
       placeName.textContent = place.name;
       content.appendChild(placeName);
+
       if (place.rating > 0) {
         let placeRating = document.createElement("p");
         placeRating.textContent = place.rating + "/5 ⭐";
         content.appendChild(placeRating);
       }
+
       if (place.website !== undefined) {
         let placeWebsite = document.createElement("a");
         placeWebsite.href = place.website;
@@ -147,15 +141,13 @@ class DifferentForm extends Component {
         placeWebsite.classList.add("linkWebsite");
         content.appendChild(placeWebsite);
       }
+
       let likeBtn = document.createElement("button");
       likeBtn.classList.add("likeBtn");
       likeBtn.textContent = "❤";
       likeBtn.addEventListener("click", () => {
         likeBtn.classList.add("likeBtnLiked");
-        this.setState({ places: [...this.state.places, place] });
-        setTimeout(() => {
-          console.log(this.state.places);
-        }, 2000);
+        this.addPlaceToDestination(place, country);
       });
       content.appendChild(likeBtn);
 
@@ -164,38 +156,90 @@ class DifferentForm extends Component {
     });
   }
 
-  saveList() {
-    //* Parcourir l'état places
-    let places = this.state.places;
+  async addPlaceToDestination(place, country) {
+    const { token } = this.props.auth; // Récupération du token depuis props
+    //! Ok token et userId bien récupérés
+    console.log(this.props.auth);
+    //? this.state.destinationId renvoie null car à aucun moment il n'est renseigné /!\
+    //? Revoir le procédé concernant la récupération du destinationId ici on ne rentre dans aucune des conditions suivantes
+    console.log(this.state.destinationId);
+    if (!this.state.destinationId) {
+      // Créer une nouvelle destination
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/destination/',
+          {
+            userId: this.props.userId,
+            country: country,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Ajout du token dans les en-têtes
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        this.setState({ destinationId: response.data._id });
+      } catch (error) {
+        console.error("Error creating destination:", error);
+      }
+    }
 
-    //* On vérifie si la clé valeur ville est la même pour tous les objets
-    //* Si ça n'est pas le cas on maj l'état city avec le pays si c'est OK on maj l'état city avec la ville
-    //! Non opérationnel selon la ville, le continent...
-    // let isSameCity = places.every(place => place.address_components[5].long_name === places[0].address_components[5].long_name);
-    // isSameCity ? this.setState({ city: places[0].address_components[6].long_name }) : this.setState({ city: places[0].address_components[5].long_name });
-
-    let countryIndex = places[0].address_components.length - 2;
-    this.setState({
-      city: places[0].address_components[countryIndex].long_name,
-    });
-
-    let city = this.state.city;
-    if (places.length > 0 && city != null) {
-      let destination = {
-        city: this.state.city,
-        places: this.state.places,
-      };
-      console.log(destination);
-      this.props.addDestination(destination);
-      this.setState({ shouldRedirect: true });
+    if (this.state.destinationId) {
+      // Ajouter un lieu à la destination existante
+      try {
+        await axios.post(
+          `http://localhost:3000/api/destination/${this.state.destinationId}/add-places/`,
+          {
+            place: place,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Ajout du token dans les en-têtes
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        this.setState({ places: [...this.state.places, place] });
+      } catch (error) {
+        console.error("Error adding place to destination:", error);
+      }
     }
   }
+
+  // async saveList() {
+  //   const { token } = this.props.auth; // Récupération du token depuis props
+
+  //   if (this.state.destinationId && this.state.places.length > 0) {
+  //     // Sauvegarder la destination et les lieux
+  //     try {
+  //       await axios.post(
+  //         `http://localhost:3000/api/destination/${this.state.destinationId}`,
+  //         {
+  //           places: this.state.places,
+  //         },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`, // Ajout du token dans les en-têtes
+  //             'Content-Type': 'application/json',
+  //           },
+  //         }
+  //       );
+  //       this.setState({ shouldRedirect: true });
+  //     } catch (error) {
+  //       console.error("Error saving destination:", error);
+  //     }
+  //   }
+  // }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addDestination: (payload) => dispatch({ type: "ADD_DESTINATION", payload }),
-  };
-};
+const mapStateToProps = (state) => ({
+  userId: state.user.id, // Assurez-vous que l'utilisateur est correctement stocké dans l'état
+  auth: state.auth, // Récupération du token depuis l'état
+});
 
-export default connect(null, mapDispatchToProps)(DifferentForm);
+const mapDispatchToProps = (dispatch) => ({
+  addDestination: (payload) => dispatch({ type: "ADD_DESTINATION", payload }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DifferentForm);
