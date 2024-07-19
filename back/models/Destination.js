@@ -15,7 +15,7 @@ const placeSchema = new mongoose.Schema({
 const destinationSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   country: String,
-  city: String,
+  // city: String,
   places: [placeSchema], // Embedding places within the destination schema
 });
 
