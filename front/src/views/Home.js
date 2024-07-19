@@ -11,6 +11,7 @@ class Home extends Component {
             <div>
                 <Navbar/>
                 {this.props.destinations.destinations.length > 0 ? (<DestinationsList/>) : (<EmptyList/>)}
+                {/** ATTENTION LES DESTINATIONS NE SONT PLUS RECUPEREES EN BDD A LA CONNEXION DE L UTILISATEUR */}
             </div>
         );
     }
