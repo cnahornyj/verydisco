@@ -59,13 +59,15 @@
 import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { thunk } from 'redux-thunk'; // Change default import to named import
-import destinationReducer from './reducers/destinationReducer';
+import authReducer from './reducers/authReducer';
 import userReducer from './reducers/userReducer';
+import destinationReducer from './reducers/destinationReducer';
+
 
 const rootReducer = combineReducers({
-  destinations: destinationReducer,
+  auth: authReducer,
   user: userReducer,
-  // Ajoutez d'autres réducteurs ici si nécessaire
+  destinations: destinationReducer,
 });
 
 const store = createStore(
