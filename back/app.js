@@ -21,10 +21,18 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
-  });
+});
 
-//* Ici il faut convertir la donnée au format JSON
+// Convertir la donnée au format JSON
 app.use(bodyParser.json());
+
+// Middleware pour logger le token
+app.use((req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    console.log("Token reçu côté serveur:", token);
+    next();
+});
 
 app.use('/api/auth', userRoutes);
 app.use('/api/destination', destinationRoutes);
