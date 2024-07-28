@@ -63,17 +63,28 @@ export const fetchDestinations = () => {
   return (dispatch, getState) => {
     dispatch(fetchDestinationsRequest());
 
-    const token = getState().auth.token;
+    let token = getState().auth.token;
+    if (!token) {
+      token = localStorage.getItem('token');
+    }
+
+    if (!token) {
+      console.error("Token non trouvé");
+      return dispatch(fetchDestinationsFailure("Token non trouvé"));
+    }
+
+    // console.log("Token utilisé dans la requête:", token);
 
     axios.get('http://localhost:3000/api/destination', {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${token.slice(1, -1)}`,
       }
     })
     .then(response => {
       dispatch(fetchDestinationsSuccess(response.data));
     })
     .catch(error => {
+      console.error("Erreur lors de la récupération des destinations:", error.response);
       dispatch(fetchDestinationsFailure(error.message));
     });
   };
