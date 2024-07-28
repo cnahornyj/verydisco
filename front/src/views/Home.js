@@ -1,31 +1,34 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Navbar from '../components/Navbar';
 import DestinationsList from "../components/DestinationsList";
 import EmptyList from "../components/EmptyList";
-import { connect } from 'react-redux';
+import { fetchDestinations } from '../actions/destinationActions';
 
 class Home extends Component {
   
+    componentDidMount() {
+        this.props.fetchDestinations();  // Déclencher l'action pour récupérer les destinations
+    }
+
     render() {
         return (
             <div>
                 <Navbar/>
-                {this.props.destinations.destinations.length > 0 ? (<DestinationsList/>) : (<EmptyList/>)}
-                {/** ATTENTION LES DESTINATIONS NE SONT PLUS RECUPEREES EN BDD A LA CONNEXION DE L UTILISATEUR */}
+                {this.props.destinations.length > 0 ? (<DestinationsList/>) : (<EmptyList/>)}
             </div>
         );
-    }
-
-    componentDidMount(){
-        //console.log(this.props.destinations.destinations.length);
-        console.log(this.props.destinations.destinations);
     }
 }
 
 const mapStateToProps = (state) => {
     return {
-      destinations: state.destinations 
+      destinations: state.destinations.destinations || []  // Accéder correctement aux destinations
     }
-  }
+}
 
-export default connect(mapStateToProps, null)(Home);
+const mapDispatchToProps = {
+    fetchDestinations  // Inclure l'action dans les props
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
