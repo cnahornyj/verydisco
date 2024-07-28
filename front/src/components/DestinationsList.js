@@ -18,10 +18,10 @@ class DestinationsList extends Component {
         <div className="List">
           {destinations && destinations.length > 0 ? (
             destinations.map((destination) => (
-              <div className="Destination" key={destination.city}>
+              <div className="Destination" key={destination._id}>
                 {/* Affichage de la première image récupérée */}
                 {/* ⚠️ La valeur en BDD est address il faudra récupérer le pays dans celle-ci en conséquence */}
-                {destination.places.length > 0 && destination.places[0].address_components ? (
+                {destination.places.length > 0 && destination.places[0].address_components ? (                  
                   <img
                     src={`https://flagsapi.com/${destination.places[0].address_components[destination.places[0].address_components.length - 2].short_name}/flat/64.png`}
                     alt="Drapeau"
@@ -34,8 +34,8 @@ class DestinationsList extends Component {
                     className="Flag"
                   />
                 )}
-                <p>{destination.city.toUpperCase()}</p>
-                <Link to={`/destination/${destination.city}`}>i</Link>
+                <p>{destination.country.toUpperCase()}</p>
+                <Link to={`/destination/${destination.country}`}>i</Link>
               </div>
             ))
           ) : (
