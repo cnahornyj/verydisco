@@ -12,7 +12,7 @@ class DifferentForm extends Component {
     super(props);
 
     this.state = {
-      city: null,
+      country: null,
       places: [],
       shouldRedirect: null,
       destinationId: null,
@@ -154,27 +154,43 @@ class DifferentForm extends Component {
       infowindow.setContent(content);
       infowindow.open(map, marker);
     });
+
+    // const token = localStorage.getItem('token');
+    // const userId = localStorage.getItem('userId');
+    // console.log(token);
+    // console.log(userId);
+
   }
 
+  //? Déroulé des étapes :
+  //? - Au premier like sur un lieu on récupère le pays de celui-ci et on SET this.state.country avec la valeur
+  //? - Mettre en place une condition pour vérifier si this.state.country est vide ou non
+  //? - Si vide on crée la destination avec le pays
+  //? - Si non vide on considère que la destination est existante et que l'on veut ajouter des lieux supplémentaires en plus du premier
+
   async addPlaceToDestination(place, country) {
-    const { token } = this.props.auth; // Récupération du token depuis props
-    //! Ok token et userId bien récupérés
-    console.log(this.props.auth);
+    // const { token } = this.props.auth; // Récupération du token depuis props
+    // console.log(this.props.auth);
+
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    console.log(token, userId);
+
     //? this.state.destinationId renvoie null car à aucun moment il n'est renseigné /!\
-    //? Revoir le procédé concernant la récupération du destinationId ici on ne rentre dans aucune des conditions suivantes
     console.log(this.state.destinationId);
+
     if (!this.state.destinationId) {
       // Créer une nouvelle destination
       try {
         const response = await axios.post(
           'http://localhost:3000/api/destination/',
           {
-            userId: this.props.userId,
+            userId: userId,
             country: country,
           },
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Ajout du token dans les en-têtes
+              Authorization: `Bearer ${token.slice(1, -1)}`, // Ajout du token dans les en-têtes
               'Content-Type': 'application/json',
             },
           }
@@ -184,6 +200,8 @@ class DifferentForm extends Component {
         console.error("Error creating destination:", error);
       }
     }
+
+    //? N'y aura t-il pas un pb de latence entre la création de la destination et celle du premier lieu ???
 
     if (this.state.destinationId) {
       // Ajouter un lieu à la destination existante
@@ -195,7 +213,7 @@ class DifferentForm extends Component {
           },
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Ajout du token dans les en-têtes
+              Authorization: `Bearer ${token.slice(1, -1)}`, // Ajout du token dans les en-têtes
               'Content-Type': 'application/json',
             },
           }
@@ -207,6 +225,9 @@ class DifferentForm extends Component {
     }
   }
 
+  //? Différente manière de procéder : 
+  //? V1 vérifier si tous les lieux récupérés ont le même pays et crée la destination avec le pays en question
+  //? V2 vérifier si tous les lieux récupérés ont la même ville et créer la destination avec la ville en question sinon créer la destination avec le pays
   // async saveList() {
   //   const { token } = this.props.auth; // Récupération du token depuis props
 
