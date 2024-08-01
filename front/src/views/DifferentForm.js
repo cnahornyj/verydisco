@@ -1,5 +1,3 @@
-// src/views/DifferentForm.js
-
 import React, { Component } from "react";
 import { Navigate } from "react-router-dom";
 import "../style/DifferentForm.css";
@@ -14,11 +12,11 @@ class DifferentForm extends Component {
     this.state = {
       country: null,
       places: [],
-      shouldRedirect: null,
       destinationId: null,
+      shouldRedirect: null,
     };
 
-    // this.saveList = this.saveList.bind(this);
+    this.saveList = this.saveList.bind(this);
     this.addPlaceToDestination = this.addPlaceToDestination.bind(this);
   }
 
@@ -34,7 +32,7 @@ class DifferentForm extends Component {
             </div>
             <ul>
               {this.state.places.map((place) => (
-                <li key={place.placeId}>{place.name}</li>
+                <li key={place.place_id}>{place.name}</li>
               ))}
             </ul>
           </div>
@@ -115,6 +113,7 @@ class DifferentForm extends Component {
 
       let countryIndex = place.address_components.length - 2;
       let country = place.address_components[countryIndex].long_name;
+      console.log(country);
 
       if (place.photos) {
         for (let i = 0; i < place.photos.length; i++) {
@@ -154,109 +153,75 @@ class DifferentForm extends Component {
       infowindow.setContent(content);
       infowindow.open(map, marker);
     });
-
-    // const token = localStorage.getItem('token');
-    // const userId = localStorage.getItem('userId');
-    // console.log(token);
-    // console.log(userId);
-
   }
 
-  //? Déroulé des étapes :
-  //? - Au premier like sur un lieu on récupère le pays de celui-ci et on SET this.state.country avec la valeur
-  //? - Mettre en place une condition pour vérifier si this.state.country est vide ou non
-  //? - Si vide on crée la destination avec le pays
-  //? - Si non vide on considère que la destination est existante et que l'on veut ajouter des lieux supplémentaires en plus du premier
+  addPlaceToDestination(place, country) {
+    this.setState(prevState => {
+      const newState = {
+        places: [...prevState.places, { ...place, country: country }]
+      };
+      console.log("New state after adding place:", newState);
+      return newState;
+    });
+  }
 
-  async addPlaceToDestination(place, country) {
-    // const { token } = this.props.auth; // Récupération du token depuis props
-    // console.log(this.props.auth);
-
+  async saveList() {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-    console.log(token, userId);
 
-    //? this.state.destinationId renvoie null car à aucun moment il n'est renseigné /!\
-    console.log(this.state.destinationId);
-
-    if (!this.state.destinationId) {
-      // Créer une nouvelle destination
-      try {
-        const response = await axios.post(
-          'http://localhost:3000/api/destination/',
-          {
-            userId: userId,
-            country: country,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token.slice(1, -1)}`, // Ajout du token dans les en-têtes
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        this.setState({ destinationId: response.data._id });
-      } catch (error) {
-        console.error("Error creating destination:", error);
-      }
+    if (this.state.places.length === 0) {
+      return;
     }
 
-    //? N'y aura t-il pas un pb de latence entre la création de la destination et celle du premier lieu ???
-
-    if (this.state.destinationId) {
-      // Ajouter un lieu à la destination existante
-      try {
-        await axios.post(
-          `http://localhost:3000/api/destination/${this.state.destinationId}/add-places/`,
-          {
-            place: place,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token.slice(1, -1)}`, // Ajout du token dans les en-têtes
-              'Content-Type': 'application/json',
+    const country = this.state.places[0].country;
+    this.setState({ country: country }, async () => {
+      if (!this.state.destinationId) {
+        // Create a new destination
+        try {
+          const response = await axios.post(
+            'http://localhost:3000/api/destination/',
+            {
+              userId: userId,
+              country: this.state.country,
             },
-          }
-        );
-        this.setState({ places: [...this.state.places, place] });
-      } catch (error) {
-        console.error("Error adding place to destination:", error);
+            {
+              headers: {
+                Authorization: `Bearer ${token.slice(1, -1)}`,
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          this.setState({ destinationId: response.data._id }, async () => {
+            // Add places to the created destination
+            try {
+              await axios.post(
+                `http://localhost:3000/api/destination/${this.state.destinationId}/add-places/`,
+                {
+                  places: this.state.places,
+                },
+                {
+                  headers: {
+                    Authorization: `Bearer ${token.slice(1, -1)}`,
+                    'Content-Type': 'application/json',
+                  },
+                }
+              );
+              this.setState({ shouldRedirect: true });
+            } catch (error) {
+              console.error("Error adding places to destination:", error);
+            }
+          });
+        } catch (error) {
+          console.error("Error creating destination:", error);
+        }
       }
-    }
+    });
   }
-
-  //? Différente manière de procéder : 
-  //? V1 vérifier si tous les lieux récupérés ont le même pays et crée la destination avec le pays en question
-  //? V2 vérifier si tous les lieux récupérés ont la même ville et créer la destination avec la ville en question sinon créer la destination avec le pays
-  // async saveList() {
-  //   const { token } = this.props.auth; // Récupération du token depuis props
-
-  //   if (this.state.destinationId && this.state.places.length > 0) {
-  //     // Sauvegarder la destination et les lieux
-  //     try {
-  //       await axios.post(
-  //         `http://localhost:3000/api/destination/${this.state.destinationId}`,
-  //         {
-  //           places: this.state.places,
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`, // Ajout du token dans les en-têtes
-  //             'Content-Type': 'application/json',
-  //           },
-  //         }
-  //       );
-  //       this.setState({ shouldRedirect: true });
-  //     } catch (error) {
-  //       console.error("Error saving destination:", error);
-  //     }
-  //   }
-  // }
 }
 
 const mapStateToProps = (state) => ({
-  userId: state.user.id, // Assurez-vous que l'utilisateur est correctement stocké dans l'état
-  auth: state.auth, // Récupération du token depuis l'état
+  userId: state.user.id,
+  auth: state.auth,
 });
 
 const mapDispatchToProps = (dispatch) => ({
