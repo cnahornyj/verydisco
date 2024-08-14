@@ -18,12 +18,14 @@ class DestinationPage extends Component {
 
     componentDidMount() {
         const { destinations } = this.props;
+        console.log('Destinations from Redux:', destinations); // Debug log
+    
         const url = window.location.href;
         const lastSlash = url.lastIndexOf("/");
-        const city = url.substring(lastSlash + 1);
-
-        const destination = destinations.find(dest => dest.city === city);
-
+        const country = url.substring(lastSlash + 1);
+    
+        const destination = destinations.find(dest => dest.country.toLowerCase() === country.toLowerCase()); // Ensure case-insensitive comparison
+    
         if (destination) {
             this.setState({ destination });
         } else {
@@ -33,8 +35,19 @@ class DestinationPage extends Component {
 
     openModalWithPlace(placeId) {
         const { destination } = this.state;
-        const place = destination.places.find(p => p.place_id === placeId);
-        this.setState({ activePlace: place, isModalOpen: true });
+
+        if (!destination || !destination.places) {
+            console.error("Destination or places not defined");
+            return;
+        }
+
+        const place = destination.places.find(p => p._id === placeId);
+
+        if (place) {
+            this.setState({ activePlace: place, isModalOpen: true });
+        } else {
+            console.error("Place not found");
+        }
     }
 
     closeModal = () => {
@@ -49,7 +62,7 @@ class DestinationPage extends Component {
                 <Navbar/>
                 {destination ? (
                     <div className='InformationsCity'>
-                        <h1>{destination.city.toUpperCase()}</h1>
+                        <h1>{destination.country.toUpperCase()}</h1>
                         <div className='Country'>
                             {destination.places.length > 0 && destination.places[0].address_components ? (
                                 <img
@@ -68,7 +81,7 @@ class DestinationPage extends Component {
                         <div className={`PlacesList ${isModalOpen ? 'BlurSaturation' : ''}`}>
                             {destination.places.length > 0 ? (
                                 destination.places.map((place) => (
-                                    <div className='Place' key={place.place_id}>
+                                    <div className='Place' key={place._id}>
                                         {place.photos && place.photos.length > 0 ? (
                                             <img src={place.photos[0].imgUrl} alt={place.name} />
                                         ) : (
@@ -78,7 +91,7 @@ class DestinationPage extends Component {
                                             <h3>{place.name}</h3>
                                             <p className='EditorialSummary'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquam eius autem nihil maxime, deleniti sapiente nulla ipsa.</p>
                                             <a href={place.website} target="_blank" rel="noreferrer">Site web</a>
-                                            <button onClick={() => this.openModalWithPlace(place.place_id)}>
+                                            <button onClick={() => this.openModalWithPlace(place._id)}>
                                                 <img src={informations_icon} alt="Informations icon" className='InfosIcon'/>
                                             </button>
                                         </div>
@@ -111,7 +124,7 @@ class DestinationPage extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        destinations: state.destinations.destinations, // Adjust if necessary
+        destinations: state.destinations.destinations, 
     };
 };
 
