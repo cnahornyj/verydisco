@@ -42,6 +42,8 @@ class DestinationPage extends Component {
         }
 
         const place = destination.places.find(p => p._id === placeId);
+        console.log('Selected Place:', place);
+        this.setState({ activePlace: place, isModalOpen: true });
 
         if (place) {
             this.setState({ activePlace: place, isModalOpen: true });
@@ -66,7 +68,7 @@ class DestinationPage extends Component {
                         <div className='Country'>
                             {destination.places.length > 0 && destination.places[0].address_components ? (
                                 <img
-                                    src={`https://flagsapi.com/${destination.places[0].address_components[destination.places[0].address_components.length - 2].short_name}/flat/64.png`}
+                                    src={`https://via.placeholder.com/64`}
                                     alt="Drapeau"
                                     className="Flag"
                                 />
@@ -82,14 +84,18 @@ class DestinationPage extends Component {
                             {destination.places.length > 0 ? (
                                 destination.places.map((place) => (
                                     <div className='Place' key={place._id}>
-                                        {place.photos && place.photos.length > 0 ? (
-                                            <img src={place.photos[0].imgUrl} alt={place.name} />
+                                        {place.photos ? (
+                                            <img src={place.photos[0]} alt={place.name} />
                                         ) : (
                                             <img src="https://via.placeholder.com/150" alt="Placeholder" />
                                         )}
                                         <div className='InformationsPlace'>
                                             <h3>{place.name}</h3>
-                                            <p className='EditorialSummary'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Aliquam eius autem nihil maxime, deleniti sapiente nulla ipsa.</p>
+                                            {place.description ? (
+                                              <p className='EditorialSummary'>{place.description}</p>
+                                            ) : (
+                                              <p className='EditorialSummary'>Aucune description.</p>
+                                            )}
                                             <a href={place.website} target="_blank" rel="noreferrer">Site web</a>
                                             <button onClick={() => this.openModalWithPlace(place._id)}>
                                                 <img src={informations_icon} alt="Informations icon" className='InfosIcon'/>
@@ -104,11 +110,14 @@ class DestinationPage extends Component {
                         {isModalOpen && activePlace && (
                             <PlaceModal
                                 name={activePlace.name}
+                                description={activePlace.description}
+                                comments={activePlace.comments}
+                                photos={activePlace.photos}
                                 rating={activePlace.rating}
-                                isOpen={activePlace.opening_hours?.open_now}
-                                user_ratings_total={activePlace.user_ratings_total}
+                                openingHours={activePlace.openingHours}
+                                totalUserRating={activePlace.totalUserRating}
                                 reviews={activePlace.reviews}
-                                address_components={activePlace.address_components}
+                                address={activePlace.address}
                                 weekday={activePlace.opening_hours?.weekday_text}
                                 closeBtn={this.closeModal}
                             />
