@@ -23,7 +23,7 @@ class DestinationsList extends Component {
                 {/* ⚠️ La valeur en BDD est address il faudra récupérer le pays dans celle-ci en conséquence */}
                 {destination.places.length > 0 && destination.places[0].address_components ? (                  
                   <img
-                    src={`https://flagsapi.com/${destination.places[0].address_components[destination.places[0].address_components.length - 2].short_name}/flat/64.png`}
+                    src={`https://via.placeholder.com/64`}
                     alt="Drapeau"
                     className="Flag"
                   />
