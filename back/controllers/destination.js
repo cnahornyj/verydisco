@@ -102,16 +102,17 @@ exports.updatePlaceInDestination = async (req, res) => {
     }
 
     // Update the place with new data from the request body
-    const { userId, name, description, totalUserRating, rating, openingHours, address, photo, website, types } = req.body;
+    const { userId, name, description, comments, totalUserRating, rating, openingHours, address, photos, website, types } = req.body;
 
     // Check and update only the fields that are present in the request body
     if (name !== undefined) placeToUpdate.name = name;
     if (description !== undefined) placeToUpdate.description = description;
+    if (comments !== undefined) placeToUpdate.comments = comments;
     if (totalUserRating !== undefined) placeToUpdate.totalUserRating = totalUserRating;
     if (rating !== undefined) placeToUpdate.rating = rating;
     if (openingHours !== undefined) placeToUpdate.openingHours = openingHours;
     if (address !== undefined) placeToUpdate.address = address;
-    if (photo !== undefined) placeToUpdate.photo = photo;
+    if (photos !== undefined) placeToUpdate.photos = photos;
     if (website !== undefined) placeToUpdate.website = website;
     if (types !== undefined) placeToUpdate.types = types;
 
