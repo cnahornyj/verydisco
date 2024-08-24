@@ -168,16 +168,36 @@ class DifferentForm extends Component {
   async saveList() {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-
+  
     if (this.state.places.length === 0) {
       return;
     }
-
+  
+    // Mapper les données récupérées de l'API Google Maps aux champs de ton modèle Mongoose
+    const mappedPlaces = this.state.places.map((place) => ({
+      name: place.name,
+      address: place.formatted_address, // Mapping de formatted_address à address
+      totalUserRating: place.user_ratings_total,
+      rating: place.rating,
+      openingHours: place.opening_hours ? place.opening_hours.weekday_text.join(', ') : '',
+      photo: place.photos && place.photos.length > 0 ? place.photos[0].imgUrl : '',
+      website: place.website,
+      types: place.types,
+      address_components: place.address_components,
+      reviews: place.reviews.map(review => ({
+        author_name: review.author_name,
+        rating: review.rating,
+        text: review.text,
+        time: review.time,
+        profile_photo_url: review.profile_photo_url
+      }))
+    }));
+  
     const country = this.state.places[0].country;
     this.setState({ country: country }, async () => {
       if (!this.state.destinationId) {
-        // Create a new destination
         try {
+          // Création d'une nouvelle destination
           const response = await axios.post(
             'http://localhost:3000/api/destination/',
             {
@@ -192,12 +212,12 @@ class DifferentForm extends Component {
             }
           );
           this.setState({ destinationId: response.data._id }, async () => {
-            // Add places to the created destination
+            // Ajout des lieux à la destination créée
             try {
               await axios.post(
                 `http://localhost:3000/api/destination/${this.state.destinationId}/add-places/`,
                 {
-                  places: this.state.places,
+                  places: mappedPlaces, // Utilisation des lieux mappés
                 },
                 {
                   headers: {
@@ -217,6 +237,7 @@ class DifferentForm extends Component {
       }
     });
   }
+  
 }
 
 const mapStateToProps = (state) => ({
