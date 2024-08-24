@@ -1,31 +1,11 @@
 .PlaceModal {
-    display: flex;
-    background: #f8f8ff;
-    border: 1px solid lightgrey;
+    /* background: #f8f8ff;
+    border: 1px solid lightgrey; */
     border-radius: 15px;
-    width: 80%;
-    margin: auto;
-    padding: 15px 0;
-    position: fixed;
-    top: 45%;
-    left: 27%;
-    margin-top: -100px;
-    margin-left: -250px;
-}
-
-.PlaceModal > div {
-    width: 50%;
-}
-
-.PlaceModal > div:first-child {
-    border-right: 1px solid dimgrey;
-    padding-left: 30px;
-    padding-right: 30px;
-}
-
-.PlaceModal > div:nth-child(2) {
-    padding-right: 15px;
-    padding-left: 15px;
+    width: 40%;
+    position: absolute;
+    top: 60px;
+    left: 540px;
 }
 
 .CloseModalBtn {
@@ -39,6 +19,15 @@
 
 .Cross {
     width: 35px;
+}
+
+.Content {    
+    padding: 0 15px;
+    background: #f8f8ff;
+    border: 1px solid #ccc;
+    border-bottom-left-radius: 5px solid #ccc;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 .MainTitle {
@@ -71,6 +60,25 @@
     margin: 0;
 }
 
+.CommentsAndAddress {
+    display: flex;
+    padding-bottom: 5px;
+}
+
+.CommentsAndAddress > div {
+    margin-top: 15px;
+    padding-bottom: 15px;
+    width: 50%;
+}
+
+.CommentsAndAddress > div:first-child {
+    border-right: 1px solid #bdb8b8;
+}
+
+.CommentsAndAddress > div:nth-child(2) {
+    padding-left: 15px;
+}
+
 .UserReviewImg {
     width: 60px;
 }
@@ -82,4 +90,14 @@
 
 .OpenHours {
     line-height: 10px;
+}
+
+.OpenHours > p {
+    font-size: 0.9em;
+}
+
+.EditorialSummary {
+    font-size: 12px;
+    padding-right: 15px;
+    text-align: justify;
 }
