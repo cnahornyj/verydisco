@@ -73,6 +73,7 @@
 
 .CommentsAndAddress > div:first-child {
     border-right: 1px solid #bdb8b8;
+    padding-right: 15px;
 }
 
 .CommentsAndAddress > div:nth-child(2) {
@@ -84,8 +85,9 @@
 }
 
 .TextReview {
-    font-size: 14px;
+    font-size: 12px;
     padding-left: 15px;
+    text-align: justify;
 }
 
 .OpenHours {
