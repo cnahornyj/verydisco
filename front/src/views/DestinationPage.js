@@ -115,9 +115,9 @@ class DestinationPage extends Component {
                                 photos={activePlace.photos}
                                 rating={activePlace.rating}
                                 openingHours={activePlace.openingHours}
-                                totalUserRating={activePlace.totalUserRating}
+                                totalUserRating={activePlace.user_ratings_total}
                                 reviews={activePlace.reviews}
-                                address={activePlace.address}
+                                address={activePlace.formatted_address}
                                 weekday={activePlace.opening_hours?.weekday_text}
                                 closeBtn={this.closeModal}
                             />
