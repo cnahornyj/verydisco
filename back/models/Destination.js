@@ -27,6 +27,7 @@ const placeSchema = new mongoose.Schema({
   photos: [String],
   website: String,
   types: [String],
+  placeId: String
 });
 
 const destinationSchema = new mongoose.Schema({
