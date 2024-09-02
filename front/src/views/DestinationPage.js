@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import PlaceModal from '../components/PlaceModal';
 import "../style/DestinationPage.css";
 import informations_icon from "../assets/informations_grey_light_icon.png";
+import delete_icon from "../assets/trash_grey_light_icon.png";  // Assurez-vous d'avoir une icône de suppression
 
 class DestinationPage extends Component {
     constructor(props) {
@@ -14,17 +15,16 @@ class DestinationPage extends Component {
             activePlace: null
         };
         this.openModalWithPlace = this.openModalWithPlace.bind(this);
+        this.removePlace = this.removePlace.bind(this);  // Bind de la fonction de suppression
     }
 
     componentDidMount() {
         const { destinations } = this.props;
-        console.log('Destinations from Redux:', destinations); // Debug log
-    
         const url = window.location.href;
         const lastSlash = url.lastIndexOf("/");
         const country = url.substring(lastSlash + 1);
-    
-        const destination = destinations.find(dest => dest.country.toLowerCase() === country.toLowerCase()); // Ensure case-insensitive comparison
+
+        const destination = destinations.find(dest => dest.country.toLowerCase() === country.toLowerCase());
     
         if (destination) {
             this.setState({ destination });
@@ -36,70 +36,69 @@ class DestinationPage extends Component {
     openModalWithPlace(placeId) {
         const { destination } = this.state;
 
-        if (!destination || !destination.places) {
-            console.error("Destination or places not defined");
-            return;
-        }
-
         const place = destination.places.find(p => p._id === placeId);
-        console.log('Selected Place:', place);
         this.setState({ activePlace: place, isModalOpen: true });
-
-        if (place) {
-            this.setState({ activePlace: place, isModalOpen: true });
-        } else {
-            console.error("Place not found");
-        }
     }
 
     closeModal = () => {
         this.setState({ isModalOpen: false, activePlace: null });
     };
 
+    async removePlace(placeId) {
+        const { destination } = this.state;
+
+        if (!destination) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:3000/api/destination/${destination._id}/delete-place/${placeId}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token.slice(1, -1)}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const updatedDestination = await response.json();
+                this.setState({ destination: updatedDestination });
+            } else {
+                console.error('Failed to delete place:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error deleting place:', error);
+        }
+    }
+
     render() {
         const { destination, isModalOpen, activePlace } = this.state;
 
         return (
             <div className='DestinationPage'>
-                <Navbar/>
+                <Navbar />
                 {destination ? (
                     <div className='InformationsCity'>
                         <h1>{destination.country.toUpperCase()}</h1>
                         <div className='Country'>
-                            {destination.places.length > 0 && destination.places[0].address_components ? (
-                                <img
-                                    src={`https://via.placeholder.com/64`}
-                                    alt="Drapeau"
-                                    className="Flag"
-                                />
-                            ) : (
-                                <img
-                                    src="https://via.placeholder.com/64"
-                                    alt="Drapeau"
-                                    className="Flag"
-                                />
-                            )}
+                            <img src={`https://via.placeholder.com/64`} alt="Drapeau" className="Flag" />
                         </div>
                         <div className={`PlacesList ${isModalOpen ? 'BlurSaturation' : ''}`}>
                             {destination.places.length > 0 ? (
                                 destination.places.map((place) => (
                                     <div className='Place' key={place._id}>
-                                        {place.photos ? (
-                                            <img src={place.photos[0]} alt={place.name} />
-                                        ) : (
-                                            <img src="https://via.placeholder.com/150" alt="Placeholder" />
-                                        )}
+                                        <img src={place.photos ? place.photos[0] : "https://via.placeholder.com/150"} alt={place.name} />
                                         <div className='InformationsPlace'>
-                                            <h3>{place.name}</h3>
-                                            {place.description ? (
-                                              <p className='EditorialSummary'>{place.description}</p>
-                                            ) : (
-                                              <p className='EditorialSummary'>Aucune description.</p>
-                                            )}
+                                            <div className='NameAndInfos'>
+                                                <h3>{place.name}</h3>
+                                                <button onClick={() => this.openModalWithPlace(place._id)} style={{paddingRight: '10px'}}>
+                                                    <img src={informations_icon} alt="Informations icon" className='InfosIcon' />
+                                                </button>
+                                            </div>                                            
+                                            <p className='EditorialSummary'>{place.description || "Aucune description."}</p>
                                             <a href={place.website} target="_blank" rel="noreferrer">Site web</a>
-                                            <button onClick={() => this.openModalWithPlace(place._id)}>
-                                                <img src={informations_icon} alt="Informations icon" className='InfosIcon'/>
-                                            </button>
+                                            <button onClick={() => this.removePlace(place._id)}>
+                                                <img src={delete_icon} alt="Delete icon" className='DeleteIcon' />
+                                            </button>                                            
                                         </div>
                                     </div>
                                 ))
