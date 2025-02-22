@@ -7,6 +7,20 @@
     margin: 0;
 }
 
+.AddPlacesBtn {
+    font-size: 14px;
+    background: #06675E;
+    color: whitesmoke;
+    padding: 15px;
+    border: 2px solid #06675E;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    margin-right: 25px;
+}
+
 .Flag {
     width: 25px;
     height: 25px;
@@ -82,6 +96,14 @@
     border: none;
     background: none;
     cursor: pointer;
+}
+
+.PencilIcon {
+    width: 20px;
+    position: absolute;
+    bottom: 10px;
+    right: 60px;
+    transition: filter 0.1s ease; 
 }
 
 .DeleteIcon {

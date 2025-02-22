@@ -1,0 +1,80 @@
+.EditPlaceModal {
+    /* background: #f8f8ff;
+    border: 1px solid lightgrey; */
+    border-radius: 15px;
+    width: 30%;
+    position: absolute;
+    top: 60px;
+    left: 540px;
+}
+
+.CloseModalBtn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: fixed;
+    top: 135px;
+    right: 15px;
+}
+
+.Cross {
+    width: 35px;
+}
+
+h2 {
+    text-align: center;
+    /* background: #06675E;
+    color: whitesmoke; */
+}
+
+.Cont {    
+    padding: 0 15px;
+    background: #f8f8ff;
+    border: 1px solid #ccc;
+    border-bottom-left-radius: 5px solid #ccc;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    width: 90%;
+}
+
+label {
+    font-size: 1.17em;
+    margin-bottom: 10px;
+}
+
+input {
+    font-size: 1.17em;
+    padding: 10px 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+textarea {
+    height: 100px;
+    font-size: 1.17em;
+    font-family: sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.SaveBtn {
+    font-size: 14px;
+    background: #06675E;
+    color: whitesmoke;
+    padding: 15px;
+    border: 2px solid #06675E;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    margin: 15px 0;
+}
