@@ -9,10 +9,13 @@ class DifferentForm extends Component {
   constructor(props) {
     super(props);
 
+    const urlParts = window.location.pathname.split("/"); 
+    const destinationId = urlParts[urlParts.length - 1]; 
+
     this.state = {
       country: null,
       places: [],
-      destinationId: null,
+      destinationId: destinationId !== "edit-destination" ? destinationId : null,
       shouldRedirect: null,
     };
 
@@ -52,6 +55,9 @@ class DifferentForm extends Component {
   }
 
   componentDidMount() {
+    
+    console.log(this.state.destinationId);
+    
     const map = new window.google.maps.Map(document.getElementById("map"), {
       center: { lat: 48.857, lng: 2.352 },
       zoom: 13,
@@ -165,6 +171,22 @@ class DifferentForm extends Component {
     });
   }
 
+  async addPlacesToExistingDestination(places) {
+    const token = localStorage.getItem('token');
+  
+    try {
+      await axios.post(
+        `http://localhost:3000/api/destination/${this.state.destinationId}/add-places/`,
+        { places },
+        { headers: { Authorization: `Bearer ${token.slice(1, -1)}`, 'Content-Type': 'application/json' } }
+      );
+  
+      this.setState({ shouldRedirect: true });
+    } catch (error) {
+      console.error("Error adding places to destination:", error);
+    }
+  }  
+
   async saveList() {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
@@ -235,6 +257,8 @@ class DifferentForm extends Component {
         } catch (error) {
           console.error("Error creating destination:", error);
         }
+      } else {
+        await this.addPlacesToExistingDestination(mappedPlaces);
       }
     });
   }
