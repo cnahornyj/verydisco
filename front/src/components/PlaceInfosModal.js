@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import "../style/PlaceModal.css";
+import "../style/PlaceInfosModal.css";
 import cross_icon from "../assets/cross_grey_light_icon.png";
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css'; // Import des styles du carrousel
