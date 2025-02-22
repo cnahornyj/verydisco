@@ -31,6 +31,14 @@ export default function App() {
           }
         />
         <Route
+          path="/add-places/:destinationId"
+          element={
+            <PrivateRoute>
+              <DifferentForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/destination/:city"
           element={
             <PrivateRoute>
