@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import Navbar from '../components/Navbar';
-import PlaceModal from '../components/PlaceModal';
+import PlaceInfosModal from '../components/PlaceInfosModal';
+import EditPlaceModal from '../components/EditPlaceModal';
 import "../style/DestinationPage.css";
 import informations_icon from "../assets/informations_grey_light_icon.png";
-import delete_icon from "../assets/trash_grey_light_icon.png";  // Assurez-vous d'avoir une icône de suppression
+import delete_icon from "../assets/trash_grey_light_icon.png";
+import pencil_icon from "../assets/pencil_icon.png";
 
 class DestinationPage extends Component {
     constructor(props) {
@@ -12,10 +15,12 @@ class DestinationPage extends Component {
         this.state = {
             destination: null,
             isModalOpen: false,
+            isEditModalOpen: false,
             activePlace: null
         };
         this.openModalWithPlace = this.openModalWithPlace.bind(this);
-        this.removePlace = this.removePlace.bind(this);  // Bind de la fonction de suppression
+        this.openEditModalWithPlace = this.openEditModalWithPlace.bind(this);
+        this.removePlace = this.removePlace.bind(this);
     }
 
     componentDidMount() {
@@ -25,9 +30,11 @@ class DestinationPage extends Component {
         const country = url.substring(lastSlash + 1);
 
         const destination = destinations.find(dest => dest.country.toLowerCase() === country.toLowerCase());
+        console.log(destination);
     
         if (destination) {
             this.setState({ destination });
+            console.log(destination);
         } else {
             console.error('Destination not found');
         }
@@ -39,9 +46,20 @@ class DestinationPage extends Component {
         const place = destination.places.find(p => p._id === placeId);
         this.setState({ activePlace: place, isModalOpen: true });
     }
-
+    
     closeModal = () => {
         this.setState({ isModalOpen: false, activePlace: null });
+    };
+
+    openEditModalWithPlace(placeId) {
+        const { destination } = this.state;
+
+        const place = destination.places.find(p => p._id === placeId);
+        this.setState({ activePlace: place, isEditModalOpen: true });
+    }
+
+    closeEditModal = () => {
+        this.setState({ isEditModalOpen: false, activePlace: null });
     };
 
     async removePlace(placeId) {
@@ -70,14 +88,21 @@ class DestinationPage extends Component {
         }
     }
 
+    addPlacesToDestination(destinationId){
+        console.log(destinationId);
+    }
+
     render() {
-        const { destination, isModalOpen, activePlace } = this.state;
+        const { destination, isModalOpen, isEditModalOpen, activePlace } = this.state;
 
         return (
             <div className='DestinationPage'>
                 <Navbar />
                 {destination ? (
                     <div className='InformationsCity'>
+                        <Link to={`/add-places/${destination._id}`}>
+                        <button className='AddPlacesBtn'>Ajouter des lieux</button>
+                        </Link>
                         <h1>{destination.country.toUpperCase()}</h1>
                         <div className='Country'>
                             <img src={`https://via.placeholder.com/64`} alt="Drapeau" className="Flag" />
@@ -96,6 +121,9 @@ class DestinationPage extends Component {
                                             </div>                                            
                                             <p className='EditorialSummary'>{place.description || "Aucune description."}</p>
                                             <a href={place.website} target="_blank" rel="noreferrer">Site web</a>
+                                            <button onClick={() => this.openEditModalWithPlace(place._id)}>
+                                                <img src={pencil_icon} alt="Pencil icon" className='PencilIcon' />
+                                            </button>
                                             <button onClick={() => this.removePlace(place._id)}>
                                                 <img src={delete_icon} alt="Delete icon" className='DeleteIcon' />
                                             </button>                                            
@@ -107,7 +135,7 @@ class DestinationPage extends Component {
                             )}
                         </div>
                         {isModalOpen && activePlace && (
-                            <PlaceModal
+                            <PlaceInfosModal
                                 name={activePlace.name}
                                 description={activePlace.description}
                                 comments={activePlace.comments}
@@ -120,6 +148,13 @@ class DestinationPage extends Component {
                                 weekday={activePlace.opening_hours?.weekday_text}
                                 closeBtn={this.closeModal}
                             />
+                        )}
+                        {isEditModalOpen && activePlace && (
+                            <EditPlaceModal
+                            name={activePlace.name}
+                            description={activePlace.description}
+                            comments={activePlace.comments}
+                            closeBtn={this.closeEditModal} />
                         )}
                     </div>
                 ) : (
